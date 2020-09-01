@@ -1,0 +1,38 @@
+li.active {
+  background: #F4F4F4;
+}
+
+li.active:hover {
+  background: #F4F4F4;
+}
+
+li:hover {
+  background: #DE691B;
+}
+
+.navbar {
+  line-height: 1;
+}
+
+html, body {
+  background: #F4F4F4;
+  font-family: 'Roboto', sans-serif;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#wrapper {
+	min-height: 100vh;
+	display: block;
+	position: relative;
+	padding-bottom: 50px;
+}
+
+#main-footer {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	height: 50px;	
+}
