@@ -111,8 +111,6 @@ public class MainController {
 	public ModelAndView handleRegisterPost(@ModelAttribute("user") @Valid UserDTO userDTO) {
 		ModelAndView resultingPage = new ModelAndView();
 		
-		System.out.println("User passwords: " + userDTO.getPassword() + " = " + userDTO.getConfirmPassword());
-		
 		if (userService.userExists(userDTO.getUsername())) {
 			resultingPage.setViewName("register");
 			resultingPage.addObject("usernameError", "The username '" + userDTO.getUsername() + "' already exists.");

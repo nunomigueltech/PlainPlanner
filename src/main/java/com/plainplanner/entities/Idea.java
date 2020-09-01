@@ -28,14 +28,11 @@ public class Idea {
 	
 	@Column(name="DATE_CREATED")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateCreated;
+	private Date dateCreated  = new Date();;
 	
-	protected Idea() {
-		dateCreated = new Date();
-	}
+	protected Idea() {}
 
 	public Idea(String name, String type) {
-		this();
 		this.title = name;
 		this.type = type;
 	}
