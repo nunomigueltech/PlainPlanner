@@ -22,11 +22,7 @@ public abstract class Note<E> {
 	
 	@Column(name="DATE_CREATED")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateCreated;
-	
-	public Note() {
-		dateCreated = new Date();
-	}
+	private Date dateCreated = new Date();
 	
 	public abstract E getContent();
 

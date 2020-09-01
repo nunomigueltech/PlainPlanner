@@ -2,14 +2,20 @@ package com.plainplanner.entities;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Temporal;
@@ -33,7 +39,7 @@ public class User {
 	
 	@Column(name="DATE_CREATED")
 	@Temporal(TemporalType.DATE)
-	private Date dateCreated;
+	private Date dateCreated = new Date();
 	
 	@OneToMany(cascade=CascadeType.PERSIST)
 	@OrderColumn(name="POSITION")
@@ -43,12 +49,13 @@ public class User {
 	private List<Note> notes;
 	
 	@ElementCollection
-	@MapKeyCollection(name="setting")
+	@MapKeyColumn(name="setting")
 	@Column(name="setting_value")
-	
+	@CollectionTable(name="user_settings", joinColumns=@JoinColumn(name="user_id"))
+	Map<String, String> settings = new HashMap<>();
 	
 	public User() {
-		dateCreated = new Date();
+		settings.put("test", "testValue");
 	}
 	
 	public User(String username, String passHash) {
@@ -96,6 +103,14 @@ public class User {
 
 	public void setBuckets(List<Bucket> buckets) {
 		this.buckets = buckets;
+	}
+	
+	public Map<String, String> getSettings() {
+		return settings;
+	}
+	
+	public void updateSetting(String key, String value) {
+		settings.put(key, value);
 	}
 
 	@Override

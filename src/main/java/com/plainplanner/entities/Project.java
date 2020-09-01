@@ -35,15 +35,13 @@ public class Project {
 	
 	@Column(name="DATE_CREATED")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateCreated;
+	private Date dateCreated = new Date();
 	
 	@Column(name="DEADLINE")
 	@Temporal(TemporalType.DATE)
 	private Date deadline;
 	
-	public Project() {
-		this.dateCreated = new Date();
-	}
+	public Project() {}
 	
 	public Project(String title) {
 		this();
