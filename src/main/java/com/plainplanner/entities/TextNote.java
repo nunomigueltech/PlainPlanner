@@ -12,7 +12,7 @@ import javax.persistence.TemporalType;
 
 @Entity
 public class TextNote extends Note<String> {
-	private String content = "Note is empty.";
+	private String content = "This note is empty.";
 	
 	public TextNote() {}
 	

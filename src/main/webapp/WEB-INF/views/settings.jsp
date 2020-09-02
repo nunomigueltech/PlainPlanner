@@ -45,7 +45,6 @@
 							</security:authorize>
 	                	</a>
 	                	<div class="dropdown-menu m-0 rounded-0 border-top-0" style="right:0%; left:auto; min-width:185px;">
-	                		<a class="dropdown-item" href="profile">Profile</a>
 	                		<a class="dropdown-item" href="statistics">Statistics</a>
 	                		<a class="dropdown-item" href="settings">Settings</a>
 	                		<div class="dropdown-divider"></div>
@@ -60,11 +59,26 @@
 	        </div>
 	    </nav>
 	
-	    <section id="test" class="mb-5 mt-3">
+	    <section id="settings-section">
 	    	<div class="container">
-	    		<h1 class="text-dark">These are my settings.</h1>
-
-	        </div>
+	    		<div class="card mt-3">
+	    			<div class="card-header text-white text-center" style="background-color: #3A3535">
+	    				<h2 class="card-title text-center">My Settings</h2>
+	    			</div>
+	    			<div class="card-body">
+	    				<c:if test="${not empty settings}">
+	    					<ul class="list-group list-group-flush">
+		    					<c:forEach items="${settings}" var="item">
+								    <li class="list-group-item">
+								    	<h4>${item.getKey()}</h4>  
+								    	<h6>Enabled: ${item.getValue()}</h6>
+								    </li>
+								</c:forEach>
+	    					</ul>
+						</c:if>
+	    			</div>
+	    		</div>
+	    	</div>
 	    </section>
 	    
 		<c:import url="/resources/footer.jsp" />

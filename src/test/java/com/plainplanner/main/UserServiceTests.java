@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.plainplanner.entities.Bucket;
 import com.plainplanner.entities.User;
+import com.plainplanner.services.BucketService;
 import com.plainplanner.services.UserService;
 
 @SpringBootTest
@@ -45,16 +46,16 @@ public class UserServiceTests {
 	@Test
 	public void testAddUser() {
 		User test = null;
-		boolean actual = userService.addUser(test);
+		User actual = userService.addUser(test);
 		
-		Assert.assertFalse(actual);
+		Assert.assertNull(actual);
 	}
 	
 	@Test
 	public void testRemoveUser() {
 		String testUsername = "testuser1000";
 		User testUser = new User(testUsername, "pass");
-		userService.addUser(testUser);
+		testUser = userService.addUser(testUser);
 		userService.removeUser(testUsername);
 		
 		boolean actual = userService.userExists(testUsername);
@@ -67,9 +68,9 @@ public class UserServiceTests {
 		User user = new User(testUsername, "pass1");
 		Bucket bucket = new Bucket("bucketName");
 		
-		userService.addUser(user);
+		user = userService.addUser(user);
 		userService.addBucket(user, bucket);
-		int expectedBuckets = 1;
+		int expectedBuckets = 2;
 		int actualBuckets = user.getBuckets().size();
 		
 		userService.removeUser(testUsername);
@@ -83,7 +84,7 @@ public class UserServiceTests {
 		User user = new User(testUsername, "pass1");
 		Bucket bucket = new Bucket("bucketName");
 		
-		userService.addUser(user);
+		user = userService.addUser(user);
 		userService.addBucket(user, bucket);
 
 		boolean actual = userService.removeBucket(user, bucket);

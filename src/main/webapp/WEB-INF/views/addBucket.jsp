@@ -2,6 +2,7 @@
     pageEncoding="ISO-8859-1"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,14 +12,14 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a4e465149a.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" type="text/css" href="resources/css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="resources/css/style.css">
-    <title>PlainPlanner - Statistics</title>
+    <link rel="stylesheet" type="text/css" href="../resources/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../resources/css/style.css">
+    <title>PlainPlanner - Add Bucket</title>
 </head>
 <body>
 	<div id="wrapper">
 		<nav class="navbar navbar-expand-md navbar-dark bg-primary p-0 m-0 position-relative">
-	        <a href="index" class="navbar-brand ml-5 p-0 text-dark" style="font-size: 2rem;">PlainPlanner</a>
+	        <a href="/index" class="navbar-brand ml-5 p-0 text-dark" style="font-size: 2rem;">PlainPlanner</a>
 	        <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
 	            <span class="navbar-toggler-icon"></span>
 	        </button>
@@ -26,16 +27,16 @@
 	        <div class="collapse navbar-collapse" id="navbarCollapse">
 	            <ul class="nav navbar-nav ml-auto ">
 	            	<li class="nav-item">
-	                	<a href="dashboard" class="nav-link py-3 px-2">Dashboard</a>
+	                	<a href="/dashboard" class="nav-link py-3 px-2">Dashboard</a>
 	            	</li>
 	            	<li class="nav-item">
-	                	<a href="projects" class="nav-link py-3 px-2">Projects</a>
+	                	<a href="/projects" class="nav-link py-3 px-2">Projects</a>
 	            	</li>
 	            	<li class="nav-item">
-	                	<a href="buckets" class="nav-link py-3 px-2">Buckets</a>
+	                	<a href="/buckets" class="nav-link py-3 px-2">Buckets</a>
 	            	</li>
 	            	<li class="nav-item">
-	                	<a href="notes" class="nav-link py-3 px-2">Notes</a>
+	                	<a href="/notes" class="nav-link py-3 px-2">Notes</a>
 	            	</li>
 	                <li class="nav-item dropdown" style="min-width:185px;">
 	                	<a class="nav-link dropdown-toggle py-3 px-2" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" style="text-transform: capitalize;">
@@ -45,10 +46,10 @@
 							</security:authorize>
 	                	</a>
 	                	<div class="dropdown-menu m-0 rounded-0 border-top-0" style="right:0%; left:auto; min-width:185px;">
-	                		<a class="dropdown-item" href="statistics">Statistics</a>
-	                		<a class="dropdown-item" href="settings">Settings</a>
+	                		<a class="dropdown-item" href="/statistics">Statistics</a>
+	                		<a class="dropdown-item" href="/settings">Settings</a>
 	                		<div class="dropdown-divider"></div>
-	                		<a class="dropdown-item" href="about">About PlainPlanner</a>
+	                		<a class="dropdown-item" href="/about">About PlainPlanner</a>
 	                		<form action="/signout" method="post">
 				    			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 				    			<button type="submit" class="btn btn-link dropdown-item py-0">Sign Out</button>
@@ -63,19 +64,33 @@
 	    	<div class="container">
 	    		<div class="card">
 	    			<div class="card-header text-white text-center" style="background-color: #3A3535">
-	    				<h2>Statistics</h2>
+	    				<h2>Create New Bucket</h2>
 	    			</div>
 	    			<div class="card-body">
-	    				Your account was created on <strong>${accountCreation}.</strong>
-	    				<br>
-	    				<br>
-	    				Here are some basic statistics:
-	    				<ul>
-	    					<li>You have a total of <strong>${ideas}</strong> ideas.</li>
-	    					<li>Of those ideas, <strong>${tasks}</strong> have been scheduled and turned into actionable tasks.</li>
-	    					<li>You have created <strong>${buckets-1}</strong> of your very own buckets. The default bucket doesn't count!</li>
-	    					<li>In total, you have created <strong>${projects}</strong> projects.</li>
-	    				</ul>
+							<form:form action="/handleAddBucket" method="post" modelAttribute="item">
+								<div class="row my-2">
+			    					<div class="input-group justify-content-center">
+			    						<form:label class="col-sm-2 col-form-label" path="title">Name</form:label>
+			    						<div class="col-sm-4">
+			    							<form:input type="text" class="login-control form-control" value="Default Name" path="title"></form:input>
+			    						</div>
+			    					</div>
+			    				</div>
+			    				<div class="row my-2">
+			    					<div class="input-group justify-content-center">
+			    						<form:label class="col-sm-2 col-form-label" path="content">Description</form:label>
+			    						<div class="col-sm-4">
+			    							<form:input type="text" class="login-control form-control" value="Default description." path="content"></form:input>
+			    						</div>
+			    					</div>
+			    				</div>
+			    				<div class="row justify-content-center mt-4">
+			    					<div class="col-2">
+			    						<form:button type="submit" class="btn btn-primary">Add</form:button>
+		    							<a href="/buckets">Cancel</a>
+			    					</div>
+		    					</div>
+		    				</form:form> 
 	    			</div>
 	    		</div>
 	        </div>

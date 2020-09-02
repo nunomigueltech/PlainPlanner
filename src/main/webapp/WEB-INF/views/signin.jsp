@@ -25,7 +25,7 @@
 	        </button>
 	
 	        <div class="collapse navbar-collapse" id="navbarCollapse">
-	            <ul class="navbar-nav ml-auto">
+	            <ul class="nav navbar-nav ml-auto">
 	            	<li class="nav-item">
 	                	<a href="register" class="nav-link py-3 px-4">Register</a>
 	            	</li>
@@ -43,6 +43,9 @@
 						<h2 class="text-center">Sign in</h2>
 						<c:if test="${not empty message}">
 							<div class="alert alert-success">${message}</div>
+						</c:if>
+						<c:if test="${not empty error}">
+							<div class="alert alert-danger">${error}</div>
 						</c:if>
 						<c:if test="${param.logout ne null}">
 							<div class="alert alert-success">You have been logged out.</div>

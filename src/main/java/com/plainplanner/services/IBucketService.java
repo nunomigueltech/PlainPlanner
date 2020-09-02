@@ -14,4 +14,6 @@ public interface IBucketService {
 	List<Bucket> getBuckets();
 	boolean containsBucket(Long id);
 	boolean containsBucket(Bucket bucket);
+	void addIdea(Bucket bucket, Idea idea);
+	void removeIdea(Bucket bucket, Idea idea);
 }

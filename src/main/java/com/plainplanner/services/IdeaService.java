@@ -1,18 +1,35 @@
 package com.plainplanner.services;
 
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.plainplanner.entities.Bucket;
 import com.plainplanner.entities.Idea;
+import com.plainplanner.entities.Project;
+import com.plainplanner.entities.User;
+import com.plainplanner.main.repositories.BucketRepository;
 import com.plainplanner.main.repositories.IdeaRepository;
+import com.plainplanner.main.repositories.ProjectRepository;
 
 @Service
 public class IdeaService implements IIdeaService {
 
 	@Autowired
 	private IdeaRepository repository;
+	
+	@Autowired
+	private BucketRepository bucketRepository;
+	
+	@Autowired
+	private ProjectRepository projectRepository;
 
 	@Override
 	public Idea addIdea(Idea idea) {
@@ -43,6 +60,7 @@ public class IdeaService implements IIdeaService {
 	}
 
 	@Override
+	@Transactional
 	public boolean removeIdea(Idea idea) {
 		if (idea == null) return true;
 		
@@ -53,7 +71,7 @@ public class IdeaService implements IIdeaService {
 	@Override
 	public boolean removeIdea(Long id) {
 		if (id == null) return true;
-		
+
 		repository.deleteById(id);
 		return (!ideaExists(id));
 	}
@@ -67,6 +85,96 @@ public class IdeaService implements IIdeaService {
 	@Override
 	public boolean ideaExists(Long id) {
 		return repository.existsById(id);
+	}
+
+	@Override
+	public List<Idea> getUpcomingTasks(User user) {
+		List<Idea> ideaList = user.getBuckets().stream()
+									.flatMap(bucket -> bucket.getIdeas().stream())
+									.collect(Collectors.toList());
+		Date today = new Date();
+		today.setHours(0);
+		today.setMinutes(0);
+		today.setSeconds(0);
+		return ideaList.stream()
+				.filter(idea -> idea.getDeadline() != null && ((idea.getDeadline().compareTo(today) >= 0) || sameDay(idea.getDeadline(), today)))
+				.sorted((x, y) -> x.getDeadline().compareTo(y.getDeadline()))
+				.limit(10)
+				.collect(Collectors.toList());
+		
+	}
+	
+	private boolean sameDay(Date date1, Date date2) {
+		return date1.getDay() == date2.getDay() && date1.getMonth() == date2.getMonth() &&
+				date1.getYear() == date2.getYear();
+	}
+
+	@Override
+	public List<Idea> getUserIdeas(User user) {
+		if (user == null) return null;
+		
+		List<Idea> ideaList = user.getBuckets().stream()
+				.flatMap(bucket -> bucket.getIdeas().stream())
+				.collect(Collectors.toList());
+		
+		return ideaList;
+	}
+
+	@Override
+	@Transactional
+	public void completeIdea(Idea idea) {
+		idea.setComplete(true);
+	}
+
+	@Override
+	@Transactional
+	public void updateTitle(Idea idea, String title) {
+		idea.setTitle(title);
+	}
+
+	@Override
+	@Transactional
+	public void updateDescription(Idea idea, String description) {
+		idea.setDescription(description);
+	}
+
+	@Override
+	@Transactional
+	public void updateDeadline(Idea idea, Date deadline) {
+		if (deadline == null) return;
+		
+		idea.setDeadline(deadline);
+		if (idea.getType().equals("idea")) {
+			idea.setType("task");
+		}
+	}
+
+	@Override
+	public Bucket getContainingBucket(Idea idea) {
+		List<Bucket> buckets = bucketRepository.findAll();
+		List<Bucket> containingBucket = buckets.stream()
+											.filter(bucket -> bucket.getIdeas().contains(idea))
+											.collect(Collectors.toList());
+		
+		if (containingBucket == null || containingBucket.isEmpty()) {
+			return null;
+		} else {
+			return containingBucket.get(0);
+		}
+	}
+
+	@Override
+	public Project getContainingProject(Idea idea) {
+		List<Project> projects = projectRepository.findAll();
+		List<Project> containingProject = projects.stream()
+											.filter(project -> project.getIdeas().contains(idea))
+											.collect(Collectors.toList());
+		
+		if (containingProject == null || containingProject.isEmpty()) {
+			return null;
+		} else {
+			return containingProject.get(0);
+		}
 	}
 
 }

@@ -23,12 +23,18 @@ public class Idea {
 	@Column(length=255)
 	private String description = "Default description.";
 	
+	private boolean complete = false;
+	
 	@Column(nullable=false)
 	private String type = "idea";
 	
 	@Column(name="DATE_CREATED")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateCreated  = new Date();;
+	private Date dateCreated  = new Date();
+	
+	@Column(name="DEADLINE")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date deadline;
 	
 	protected Idea() {}
 
@@ -67,6 +73,34 @@ public class Idea {
 	
 	public Date getDateCreated() {
 		return dateCreated;
+	}
+
+	public Date getDeadline() {
+		return deadline;
+	}
+
+	public void setDeadline(Date deadline) {
+		this.deadline = deadline;
+	}
+	
+	public String getDeadlineString() {
+		Date date = deadline;
+		if (deadline == null) {
+			date = new Date();
+		}
+		return (date.getMonth() + 1) + "/" + date.getDate() + "/" + (date.getYear() + 1900);
+	}
+
+	public boolean isComplete() {
+		return complete;
+	}
+
+	public void setComplete(boolean complete) {
+		this.complete = complete;
+	}
+	
+	public boolean isTask() {
+		return type.equals("task");
 	}
 
 	@Override

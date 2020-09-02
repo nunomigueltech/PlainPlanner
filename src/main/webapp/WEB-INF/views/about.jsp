@@ -49,7 +49,6 @@
 								<security:authentication property="principal.username" /> 
 		                	</a>
 		                	<div class="dropdown-menu m-0 rounded-0 border-top-0" style="right:0%; left:auto; min-width:185px;">
-		                		<a class="dropdown-item" href="profile">Profile</a>
 		                		<a class="dropdown-item" href="statistics">Statistics</a>
 		                		<a class="dropdown-item" href="settings">Settings</a>
 		                		<div class="dropdown-divider"></div>

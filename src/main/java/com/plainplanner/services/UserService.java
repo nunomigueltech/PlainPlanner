@@ -3,13 +3,19 @@ package com.plainplanner.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.plainplanner.entities.Bucket;
+import com.plainplanner.entities.Idea;
+import com.plainplanner.entities.Note;
+import com.plainplanner.entities.Project;
+import com.plainplanner.entities.TextNote;
 import com.plainplanner.entities.User;
+import com.plainplanner.main.repositories.BucketRepository;
 import com.plainplanner.main.repositories.UserRepository;
 
 @Service
@@ -18,6 +24,9 @@ public class UserService implements IUserService {
 	
 	@Autowired
 	private UserRepository repository;
+	
+	@Autowired
+	private BucketService bucketService;
 
 	@Override
 	public User getUserByID(Long id) {
@@ -44,13 +53,22 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public boolean addUser(User newUser) {
-		if (newUser == null) return false;
-		if (userExists(newUser.getUsername())) return true;
+	@Transactional
+	public User addUser(User newUser) {
+		if (newUser == null) return newUser;
+		if (userExists(newUser.getUsername())) return getUserByUsername(newUser.getUsername());
 		
 		System.out.println(newUser.getUsername() + " doesn't exist in the database, adding..");
-		repository.save(newUser);
-		return userExists(newUser.getUsername());
+		newUser = repository.save(newUser);
+		
+		// Every user comes with a default bucket that cannot be deleted
+		Bucket defaultBucket = new Bucket("Default Bucket");
+		defaultBucket.disallowDeletion();
+		//defaultBucket = bucketService.addBucket(defaultBucket);
+		addBucket(newUser, defaultBucket);
+		newUser.setDefaultBucket(defaultBucket);
+	
+		return newUser;
 	}
 
 	@Override
@@ -63,15 +81,11 @@ public class UserService implements IUserService {
 	}
 	
 	@Override
+	@Transactional
 	public void addBucket(User user, Bucket bucket) {
 		if (user == null || bucket == null) return;
 		
 		List<Bucket> buckets = user.getBuckets();
-		if (buckets == null) {
-			buckets = new ArrayList<Bucket>();
-			user.setBuckets(buckets);
-		}
-		
 		buckets.add(bucket);
 	}
 
@@ -83,6 +97,72 @@ public class UserService implements IUserService {
 		buckets.remove(bucket);
 		
 		return (!buckets.contains(bucket));
+	}
+
+	@Override
+	@Transactional
+	public void addProject(User user, Project project) {
+		if (user == null || project == null) return;
+		
+		user.getProjects().add(project);
+	}
+
+	@Override
+	@Transactional
+	public void removeProject(User user, Project project) {
+		if (user == null || project == null) return;
+		
+		user.getProjects().remove(project);
+	}
+
+	@Override
+	@Transactional
+	public void addTextNote(User user, TextNote note) {
+		if (user == null || note == null) return;
+		
+		user.getNotes().add(note);
+	}
+
+	@Override
+	@Transactional
+	public void removeTextNote(User user, TextNote note) {
+		if (user == null || note == null) return;
+		
+		user.getNotes().remove(note);
+	}
+
+	@Override
+	public List<Project> getProjects(User user) {
+		return user.getProjects();
+	}
+
+	@Override
+	public List<Note> getNotes(User user) {
+		return user.getNotes();
+	}
+
+	@Override
+	public List<Bucket> getBuckets(User user) {
+		return user.getBuckets();
+	}
+
+	@Override
+	public List<Idea> getIdeas(User user) {
+		List<Idea> ideas = user.getBuckets().stream()
+								.flatMap(bucket -> bucket.getIdeas().stream())
+								.collect(Collectors.toList());
+		
+		return ideas;
+	}
+
+	@Override
+	public List<Idea> getTasks(User user) {
+		List<Idea> ideas = getIdeas(user);
+		List<Idea> tasks = ideas.stream()
+								.filter(idea -> idea.isTask())
+								.collect(Collectors.toList());
+		
+		return tasks;
 	}
 	
 }

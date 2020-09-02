@@ -1,10 +1,10 @@
-li.active {
+.nav li.active {
   background: #F4F4F4; }
 
-li.active:hover {
+.nav li.active:hover {
   background: #F4F4F4; }
 
-li:hover {
+.nav li:hover {
   background: #DE691B; }
 
 .navbar {

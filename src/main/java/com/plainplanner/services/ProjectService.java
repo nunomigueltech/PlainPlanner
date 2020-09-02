@@ -4,9 +4,12 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.plainplanner.entities.Idea;
+import com.plainplanner.entities.Note;
 import com.plainplanner.entities.Project;
+import com.plainplanner.entities.User;
 import com.plainplanner.main.repositories.IdeaRepository;
 import com.plainplanner.main.repositories.ProjectRepository;
 
@@ -71,4 +74,30 @@ public class ProjectService implements IProjectService {
 		return repository.existsById(id);
 	}
 
+	@Override
+	@Transactional
+	public void addNote(Project project, Note note) {
+		if (project == null || note == null) return;
+		
+		project.getNotes().add(note);
+	}
+
+	@Override
+	@Transactional
+	public void addIdea(Project project, Idea idea) {
+		if (project == null || idea == null) return;
+		
+		project.getIdeas().add(idea);
+	}
+
+	@Override
+	@Transactional
+	public void removeIdea(Project project, Idea idea) {
+		if (project == null || idea == null) return;
+		
+		if (project.getIdeas().contains(idea)) {
+			project.getIdeas().remove(idea);
+		}
+		
+	}
 }

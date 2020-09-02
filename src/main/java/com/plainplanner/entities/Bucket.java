@@ -20,15 +20,17 @@ public class Bucket {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
-	@Column(length=50, nullable=false, unique=true)
+	@Column(length=50, nullable=false)
 	private String name = "Default";
 	
 	@Column(length=255)
 	private String description = "";
 	
-	@OneToMany(fetch=FetchType.EAGER)
+	@OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.PERSIST)
 	@OrderColumn(name="POSITION")
-	private List<Idea> ideas;
+	private List<Idea> ideas = new ArrayList<>();
+	
+	private boolean deletionPermitted = true;
 	
 	public Bucket() {}
 
@@ -65,11 +67,12 @@ public class Bucket {
 		this.ideas = ideas;
 	}
 	
-	public void addIdea(Idea idea) {
-		if (this.ideas == null) {
-			this.ideas = new ArrayList<Idea>();
-		}
-		this.ideas.add(idea);
+	public boolean isDeletionPermitted() {
+		return deletionPermitted;
+	}
+	
+	public void disallowDeletion() {
+		deletionPermitted = false;
 	}
 
 	@Override

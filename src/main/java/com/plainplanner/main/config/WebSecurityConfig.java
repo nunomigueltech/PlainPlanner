@@ -9,11 +9,14 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 import com.plainplanner.services.CustomUserDetailsService;
 
@@ -27,12 +30,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	PasswordEncoder passwordEncoder;
 	
+	@Autowired
+	private SessionRegistry sessionRegistry;
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 			.authorizeRequests()
 				.antMatchers("/").permitAll()
-				.antMatchers("/dashboard", "/buckets", "/notes", "/profile", "/projects", "/settings", "/statistics").authenticated()
+				.antMatchers("/dashboard", "/buckets", "/notes", "/profile", "/projects", "/settings", "/statistics", "/item/*", "/updateIdea/*", "/complete/*", "/addProject").authenticated()
 				.and()
 			.formLogin()
 				.loginPage("/signin")
@@ -45,6 +51,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.logoutSuccessUrl("/signin")
 				.invalidateHttpSession(true)
 				.permitAll();
+		
+		http.sessionManagement()
+			.maximumSessions(1)
+			.sessionRegistry(sessionRegistry)
+			.expiredUrl("/expiredSignin");
 	}
 	
 	@Override
@@ -53,7 +64,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.ignoring()
 			.antMatchers("/resources/**");
 	}
-
+	
 	@Override
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(authProvider());
@@ -66,5 +77,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		authProvider.setPasswordEncoder(passwordEncoder);
 		
 		return authProvider;
+	}
+	
+	@Bean
+	public HttpSessionEventPublisher httpSessionEventPublisher() {
+		return new HttpSessionEventPublisher();
+	}
+	
+	@Bean
+	public SessionRegistry sessionRegistry() {
+		return new SessionRegistryImpl();
 	}
 }

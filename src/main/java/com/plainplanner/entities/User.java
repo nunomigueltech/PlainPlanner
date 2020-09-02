@@ -11,12 +11,14 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -37,25 +39,33 @@ public class User {
 	@Column(nullable=false)
 	private String role;
 	
+	@OneToOne
+	private Bucket defaultBucket;
+	
 	@Column(name="DATE_CREATED")
 	@Temporal(TemporalType.DATE)
 	private Date dateCreated = new Date();
 	
-	@OneToMany(cascade=CascadeType.PERSIST)
+	@OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.PERSIST)
 	@OrderColumn(name="POSITION")
-	private List<Bucket> buckets;
+	private List<Project> projects = new ArrayList<>();
+	
+	@OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.PERSIST)
+	@OrderColumn(name="POSITION")
+	private List<Bucket> buckets = new ArrayList<>();
 	
 	@OneToMany(cascade=CascadeType.PERSIST)
-	private List<Note> notes;
+	private List<Note> notes = new ArrayList<>();
 	
 	@ElementCollection
 	@MapKeyColumn(name="setting")
 	@Column(name="setting_value")
 	@CollectionTable(name="user_settings", joinColumns=@JoinColumn(name="user_id"))
-	Map<String, String> settings = new HashMap<>();
+	Map<String, Boolean> settings = new HashMap<>();
 	
 	public User() {
-		settings.put("test", "testValue");
+		settings.put("Cat Mode", false);
+		settings.put("Show completed tasks and ideas", true);
 	}
 	
 	public User(String username, String passHash) {
@@ -105,12 +115,40 @@ public class User {
 		this.buckets = buckets;
 	}
 	
-	public Map<String, String> getSettings() {
+	public Bucket getDefaultBucket() {
+		return defaultBucket;
+	}
+	
+	public void setDefaultBucket(Bucket defaultBucket) {
+		this.defaultBucket = defaultBucket;
+	}
+		
+	public List<Project> getProjects() {
+		return projects;
+	}
+
+	public void setProjects(List<Project> projects) {
+		this.projects = projects;
+	}
+
+	public List<Note> getNotes() {
+		return notes;
+	}
+
+	public void setNotes(List<Note> notes) {
+		this.notes = notes;
+	}
+
+	public Map<String, Boolean> getSettings() {
 		return settings;
 	}
 	
-	public void updateSetting(String key, String value) {
+	public void updateSetting(String key, Boolean value) {
 		settings.put(key, value);
+	}
+
+	public Date getDateCreated() {
+		return dateCreated;
 	}
 
 	@Override

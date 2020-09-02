@@ -1,13 +1,16 @@
 package com.plainplanner.services;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.plainplanner.entities.Idea;
+import com.plainplanner.entities.Project;
 import com.plainplanner.entities.TextNote;
 import com.plainplanner.main.repositories.IdeaRepository;
+import com.plainplanner.main.repositories.ProjectRepository;
 import com.plainplanner.main.repositories.TextNoteRepository;
 
 @Service
@@ -15,6 +18,9 @@ public class TextNoteService implements ITextNoteService {
 
 	@Autowired
 	private TextNoteRepository repository;
+	
+	@Autowired
+	private ProjectRepository projectRepository;
 
 	@Override
 	public TextNote addTextNote(TextNote note) {
@@ -69,6 +75,20 @@ public class TextNoteService implements ITextNoteService {
 	@Override
 	public boolean textNoteExists(Long id) {
 		return repository.existsById(id);
+	}
+
+	@Override
+	public Project getContainingProject(TextNote note) {
+		List<Project> projects = projectRepository.findAll();
+		List<Project> containingProject = projects.stream()
+											.filter(project -> project.getNotes().contains(note))
+											.collect(Collectors.toList());
+		
+		if (containingProject == null || containingProject.isEmpty()) {
+			return null;
+		} else {
+			return containingProject.get(0);
+		}
 	}
 
 }

@@ -3,6 +3,7 @@ package com.plainplanner.entities;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -67,13 +68,6 @@ public class Project {
 	public void setIdeas(List<Idea> ideas) {
 		this.ideas = ideas;
 	}
-	
-	public void addIdea(Idea idea) {
-		if (this.ideas == null) {
-			this.ideas = new ArrayList<Idea>();
-		}
-		this.ideas.add(idea);
-	}
 
 	public List<Note> getNotes() {
 		return notes;
@@ -83,13 +77,6 @@ public class Project {
 		this.notes = notes;
 	}
 	
-	public void addNote(Note note) {
-		if (this.notes == null) {
-			this.notes = new ArrayList<Note>();
-		}
-		this.notes.add(note);
-	}
-
 	public Date getDateCreated() {
 		return dateCreated;
 	}
@@ -100,6 +87,20 @@ public class Project {
 
 	public void setDeadline(Date deadline) {
 		this.deadline = deadline;
+	}
+	
+	public String getTaskProgress() {
+		String progress = "No tasks assigned to this project.";
+		
+		if (!ideas.isEmpty()) {
+			List<Idea> completedIdeas = ideas.stream()
+											.filter(idea -> idea.isComplete())
+											.collect(Collectors.toList());
+			
+			progress = completedIdeas.size() + " / " + ideas.size() + " tasks completed";
+		}
+		
+		return progress;
 	}
 
 	@Override

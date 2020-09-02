@@ -45,7 +45,6 @@
 							</security:authorize>
 	                	</a>
 	                	<div class="dropdown-menu m-0 rounded-0 border-top-0" style="right:0%; left:auto; min-width:185px;">
-	                		<a class="dropdown-item" href="profile">Profile</a>
 	                		<a class="dropdown-item" href="statistics">Statistics</a>
 	                		<a class="dropdown-item" href="settings">Settings</a>
 	                		<div class="dropdown-divider"></div>
@@ -60,11 +59,44 @@
 	        </div>
 	    </nav>
 	
-	    <section id="test" class="mb-5 mt-3">
+	    <section id="buckets-section">
 	    	<div class="container">
-	    		<h1 class="text-dark">These are my buckets.</h1>
-
-	        </div>
+	    		<div class="card mt-3">
+	    			<div class="card-header text-white text-center" style="background-color: #3A3535">
+	    				<div class="row">
+	    					<div class="col justify-content-center">
+	    						<h2 class="card-title text-center">My Buckets</h2>
+	    					</div>
+	    				</div>
+	    				<div class="row">
+	    					<div class="col justify-content-center">
+	    						<a class="btn btn-primary btn-sm text-white" href="/addBucket">Add Bucket</a>
+	    					</div>
+	    				</div>
+	    			</div>
+	    			<div class="card-body">
+	    				<c:if test="${not empty param.success}">
+							<div class="alert alert-success">${param.success}</div>
+						</c:if>
+	    				<c:if test="${not empty buckets}">
+	    					<ul class="list-group list-group-flush">
+		    					<c:forEach items="${buckets}" var="item">
+								    <li class="list-group-item">
+								    	<h4>
+								    		${item.name}
+									    	<c:if test="${!item.isDeletionPermitted()}">
+									    		<h5 class="text-danger" style="font-size: 0.9rem;">(Cannot be deleted)</h5>
+									    	</c:if>
+								    	</h4>
+								    	<h5 style="font-size: 0.9rem;">Contains ${item.ideas.size()} items</h5>  
+								    	<h6>${item.description}</h6>
+								    </li>
+								</c:forEach>
+	    					</ul>
+						</c:if>
+	    			</div>
+	    		</div>
+	    	</div>
 	    </section>
 	    
 		<c:import url="/resources/footer.jsp" />

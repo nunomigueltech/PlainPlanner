@@ -63,4 +63,22 @@ public class BucketService implements IBucketService {
 	public boolean containsBucket(Bucket bucket) {
 		return (repository.findFirstByName(bucket.getName()) != null);
 	}
+
+	@Override
+	@Transactional
+	public void addIdea(Bucket bucket, Idea idea) {
+		if (bucket == null || idea == null) return;
+		
+		bucket.getIdeas().add(idea);
+	}
+
+	@Override
+	@Transactional
+	public void removeIdea(Bucket bucket, Idea idea) {
+		if (bucket == null || idea == null) return;
+		
+		if (bucket.getIdeas().contains(idea)) {
+			bucket.getIdeas().remove(idea);
+		}
+	}
 }

@@ -9,12 +9,12 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-@Target({ElementType.TYPE, ElementType.FIELD, ElementType.ANNOTATION_TYPE})
+@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = PasswordValidator.class)
+@Constraint(validatedBy = DateValidator.class)
 @Documented
-public @interface ValidPassword {
-	String message() default "Invalid password";
+public @interface ValidDate {
+	String message() default "Date isn't valid";
 	Class<?>[] groups() default {};
 	Class<? extends Payload>[] payload() default {};
 }
