@@ -232,7 +232,7 @@ public class MainController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User currentUser = userService.getUserByUsername(auth.getName());
 		
-		List<Idea> upcomingTasks = ideaService.getUpcomingTasks(currentUser);
+		List<Idea> upcomingTasks = userService.getUpcomingTasks(currentUser);
 		model.addAttribute("upcoming", upcomingTasks);
 		
 		return "dashboard";
@@ -245,7 +245,7 @@ public class MainController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (!(auth instanceof AnonymousAuthenticationToken)) {
 			User currentUser = userService.getUserByUsername(auth.getName());
-			List<Idea> upcomingTasks = ideaService.getUpcomingTasks(currentUser);
+			List<Idea> upcomingTasks = userService.getUpcomingTasks(currentUser);
 			resultingPage.addObject("upcoming", upcomingTasks);
 			
 			if (dto.getTitle().isEmpty()) return resultingPage;
@@ -310,15 +310,15 @@ public class MainController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User currentUser = userService.getUserByUsername(auth.getName());
 		
-		Idea targetIdea = ideaService.getIdea(id);
-		List<Idea> userIdeas = ideaService.getUserIdeas(currentUser);
-		if (userIdeas != null && userIdeas.contains(targetIdea)) {
+		if (userService.hasIdea(currentUser, id)) {
 			NewItemDTO dto = new NewItemDTO();
 			model.addAttribute("item", dto);
+			
+			Idea idea = ideaService.getIdea(id);
 			model.addAttribute("idea", ideaService.getIdea(id));
-			model.addAttribute("bucket", ideaService.getContainingBucket(targetIdea));
+			model.addAttribute("bucket", ideaService.getContainingBucket(idea));
 			model.addAttribute("buckets", currentUser.getBuckets());
-			model.addAttribute("project", ideaService.getContainingProject(targetIdea));
+			model.addAttribute("project", ideaService.getContainingProject(idea));
 			model.addAttribute("projects", currentUser.getProjects());
 			model.addAttribute("redirectURL", request.getHeader("referer"));
 			return "idea";
@@ -333,10 +333,9 @@ public class MainController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User currentUser = userService.getUserByUsername(auth.getName());
 		
-		Idea targetIdea = ideaService.getIdea(id);
-		List<Idea> userIdeas = ideaService.getUserIdeas(currentUser);
-		if (userIdeas.contains(targetIdea)) {
-			ideaService.completeIdea(targetIdea);
+		if (userService.hasIdea(currentUser, id)) {
+			Idea idea = ideaService.getIdea(id);
+			ideaService.completeIdea(idea);
 			return "redirect:" + request.getHeader("referer");
 		} else {
 			redirectAttrs.addAttribute("error", "You don't have permission to access that item.");
@@ -349,13 +348,12 @@ public class MainController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User currentUser = userService.getUserByUsername(auth.getName());
 		
-		Idea targetIdea = ideaService.getIdea(id);
-		List<Idea> userIdeas = ideaService.getUserIdeas(currentUser);
-		if (userIdeas.contains(targetIdea)) {
-			Bucket targetBucket = ideaService.getContainingBucket(targetIdea);
-			Project targetProject = ideaService.getContainingProject(targetIdea);
-			bucketService.removeIdea(targetBucket, targetIdea);
-			projectService.removeIdea(targetProject, targetIdea);
+		if (userService.hasIdea(currentUser, id)) {
+			Idea idea = ideaService.getIdea(id);
+			Bucket targetBucket = ideaService.getContainingBucket(idea);
+			Project targetProject = ideaService.getContainingProject(idea);
+			bucketService.removeIdea(targetBucket, idea);
+			projectService.removeIdea(targetProject, idea);
 		} else {
 			redirectAttrs.addAttribute("error", "You don't have permission to access that item.");
 		}
@@ -390,6 +388,26 @@ public class MainController {
 		return resultingPage;
 	}
 
+	@RequestMapping("/project/{id}")
+	public String project(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttrs, HttpServletRequest request) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User currentUser = userService.getUserByUsername(auth.getName());
+		
+		if (userService.hasProject(currentUser, id)) {
+			NewItemDTO dto = new NewItemDTO();
+			model.addAttribute("item", dto);
+			
+			Project project = projectService.getProject(id);
+			model.addAttribute("project", project);
+			model.addAttribute("notes", project.getNotes());
+			model.addAttribute("ideas", project.getIdeas());
+			model.addAttribute("redirectURL", request.getHeader("referer"));
+			return "project";
+		} else {
+			redirectAttrs.addAttribute("error", "You don't have permission to access that project.");
+			return "redirect:/dashboard";
+		}
+	}
 	
 	@RequestMapping("/addBucket")
 	public String addBucket(Model model) {

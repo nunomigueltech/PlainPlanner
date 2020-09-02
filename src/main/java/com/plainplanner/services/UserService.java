@@ -1,6 +1,7 @@
 package com.plainplanner.services;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -130,24 +131,88 @@ public class UserService implements IUserService {
 		
 		user.getNotes().remove(note);
 	}
+	
+	@Override
+	public boolean hasProject(User user, Long id) {
+		if (user == null || id == null) return false;
+		
+		List<Project> projects = getProjects(user);
+		
+		for (Project project : projects) {
+			if (project.getId().equals(id)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	@Override
 	public List<Project> getProjects(User user) {
+		if (user == null) return new ArrayList<Project>();
+		
 		return user.getProjects();
+	}
+	
+	@Override
+	public boolean hasNote(User user, Long id) {
+		if (user == null || id == null) return false;
+		
+		List<Note> notes = getNotes(user);
+		
+		for (Note note : notes) {
+			if (note.getId().equals(id)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
 	public List<Note> getNotes(User user) {
+		if (user == null) return new ArrayList<Note>();
+		
 		return user.getNotes();
+	}
+	
+	@Override
+	public boolean hasBucket(User user, Long id) {
+		if (user == null || user == null) return false;
+		
+		List<Bucket> buckets = getBuckets(user);
+		
+		for (Bucket bucket : buckets) {
+			if (bucket.getId().equals(id)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
 	public List<Bucket> getBuckets(User user) {
+		if (user == null) return new ArrayList<Bucket>();
+		
 		return user.getBuckets();
+	}
+	
+	@Override
+	public boolean hasIdea(User user, Long id) {
+		if (user == null || id == null) return false;
+		
+		List<Idea> ideas = getIdeas(user);
+		
+		for (Idea idea : ideas) {
+			if (idea.getId().equals(id)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
 	public List<Idea> getIdeas(User user) {
+		if (user == null) return new ArrayList<Idea>();
+		
 		List<Idea> ideas = user.getBuckets().stream()
 								.flatMap(bucket -> bucket.getIdeas().stream())
 								.collect(Collectors.toList());
@@ -157,6 +222,8 @@ public class UserService implements IUserService {
 
 	@Override
 	public List<Idea> getTasks(User user) {
+		if (user == null) return new ArrayList<Idea>();
+		
 		List<Idea> ideas = getIdeas(user);
 		List<Idea> tasks = ideas.stream()
 								.filter(idea -> idea.isTask())
@@ -165,4 +232,29 @@ public class UserService implements IUserService {
 		return tasks;
 	}
 	
+	@Override
+	public List<Idea> getUpcomingTasks(User user) {
+		if (user == null) return new ArrayList<Idea>();
+		
+		List<Idea> ideaList = user.getBuckets().stream()
+									.flatMap(bucket -> bucket.getIdeas().stream())
+									.collect(Collectors.toList());
+		Date today = new Date();
+		today.setHours(0);
+		today.setMinutes(0);
+		today.setSeconds(0);
+		return ideaList.stream()
+				.filter(idea -> idea.getDeadline() != null && ((idea.getDeadline().compareTo(today) >= 0) || sameDay(idea.getDeadline(), today)))
+				.sorted((x, y) -> x.getDeadline().compareTo(y.getDeadline()))
+				.limit(10)
+				.collect(Collectors.toList());
+		
+	}
+	
+	private boolean sameDay(Date date1, Date date2) {
+		if (date1 == null || date2 == null) return false; 
+		
+		return date1.getDay() == date2.getDay() && date1.getMonth() == date2.getMonth() &&
+				date1.getYear() == date2.getYear();
+	}
 }

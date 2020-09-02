@@ -88,39 +88,6 @@ public class IdeaService implements IIdeaService {
 	}
 
 	@Override
-	public List<Idea> getUpcomingTasks(User user) {
-		List<Idea> ideaList = user.getBuckets().stream()
-									.flatMap(bucket -> bucket.getIdeas().stream())
-									.collect(Collectors.toList());
-		Date today = new Date();
-		today.setHours(0);
-		today.setMinutes(0);
-		today.setSeconds(0);
-		return ideaList.stream()
-				.filter(idea -> idea.getDeadline() != null && ((idea.getDeadline().compareTo(today) >= 0) || sameDay(idea.getDeadline(), today)))
-				.sorted((x, y) -> x.getDeadline().compareTo(y.getDeadline()))
-				.limit(10)
-				.collect(Collectors.toList());
-		
-	}
-	
-	private boolean sameDay(Date date1, Date date2) {
-		return date1.getDay() == date2.getDay() && date1.getMonth() == date2.getMonth() &&
-				date1.getYear() == date2.getYear();
-	}
-
-	@Override
-	public List<Idea> getUserIdeas(User user) {
-		if (user == null) return null;
-		
-		List<Idea> ideaList = user.getBuckets().stream()
-				.flatMap(bucket -> bucket.getIdeas().stream())
-				.collect(Collectors.toList());
-		
-		return ideaList;
-	}
-
-	@Override
 	@Transactional
 	public void completeIdea(Idea idea) {
 		idea.setComplete(true);

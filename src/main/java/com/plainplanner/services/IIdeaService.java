@@ -18,8 +18,6 @@ public interface IIdeaService {
 	boolean removeIdea(Long id);
 	boolean ideaExists(Idea idea);
 	boolean ideaExists(Long id);
-	List<Idea> getUpcomingTasks(User user);
-	List<Idea> getUserIdeas(User user);
 	void completeIdea(Idea idea);
 	void updateTitle(Idea idea, String title);
 	void updateDescription(Idea idea, String description);
