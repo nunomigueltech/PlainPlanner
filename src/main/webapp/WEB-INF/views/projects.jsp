@@ -82,7 +82,7 @@
 	    					<ul class="list-group list-group-flush">
 		    					<c:forEach items="${projects}" var="item">
 								    <li class="list-group-item">
-								    	<h4>${item.title}</h4>
+								    	<h4><a href="/project/${item.id}">${item.title}</a></h4>
 								    	<c:if test="${not empty item.deadline}">
 								    		<h5 style="font-size: 0.9rem;">Deadline: ${item.deadline}</h5>
 								    	</c:if>		  

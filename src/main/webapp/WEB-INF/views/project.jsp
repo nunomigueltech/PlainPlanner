@@ -13,7 +13,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a4e465149a.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css" href="../resources/css/bootstrap.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw==" crossorigin="anonymous" />
     <link rel="stylesheet" type="text/css" href="../resources/css/style.css">
     <title>PlainPlanner - Project</title>
 </head>
@@ -65,106 +64,84 @@
 	    	<div class="container">
 	    		<div class="card">
 	    			<div class="card-header text-white text-center" style="background-color: #3A3535">
-	    				<h2>Viewing "${idea.title}"</h2>
+						<div class="row">
+							<div class="col">
+								<h2>${project.title}</h2>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col">
+								<h6 class="card-subtitle text-info">Created on ${project.dateCreated}</h6>
+							</div>
+						</div>
+						<c:if test="${not empty project.deadline}">
+							<div class="row">
+								<div class="col">
+									<h6 class="card-subtitle text-warning pt-1">Due on ${project.deadline}</h6>
+								</div>
+							</div>
+						</c:if>
+						<div class="row justify-content-center">
+							<div class="col-6 col-sm-12">
+								<a class="btn btn-primary btn-sm m-2" href="/projects">Back to Projects</a>
+								<a class="btn btn-primary btn-sm m-2" href="/projects"><i class="fas fa-edit"></i> Edit Project</a>
+								<a class="btn btn-primary btn-sm m-2" href="/projects"><i class="fas fa-trash"></i> Delete Project</a>
+							</div>
+						</div>
 	    			</div>
 	    			<div class="card-body">
-							<form:form action="/updateIdea" method="post" modelAttribute="item">
-								<form:hidden path="id" value="${idea.id}" />
-								<div class="row my-2">
-			    					<div class="input-group justify-content-center">
-			    						<form:label class="col-sm-2 col-form-label" path="title">Title</form:label>
-			    						<div class="col-sm-4">
-			    							<form:input type="text" class="login-control form-control" value="${idea.title}" path="title"></form:input>
-			    						</div>
-			    					</div>
-			    				</div>
-			    				<div class="row my-2">
-			    					<div class="input-group justify-content-center">
-			    						<form:label class="col-sm-2 col-form-label" path="title">Bucket</form:label>
-			    						<div class="col-sm-4">
-			    							<form:select class="btn custom-select text-left" path="bucketID">
-			    								<c:choose>
-				    								<c:when test="${not empty bucket}">
-				    									<form:option value="${bucket.id}">${bucket.name}</form:option>
-				    								</c:when>
-				    								<c:otherwise>
-				    									<form:option value="-1">Not selected</form:option>
-				    								</c:otherwise>
-			    								</c:choose>
-			    								<c:forEach items="${buckets}" var="item">
-			    									<c:if test="${(empty bucket) or (item.id != bucket.id)}">
-			    										<form:option value="${item.id}">${item.name}</form:option>
-			    									</c:if>
-			    								</c:forEach>
-			    								
-			    							</form:select>
-			    						</div>
-			    					</div>
-			    				</div>
-			    				<div class="row my-2">
-			    					<div class="input-group justify-content-center">
-			    						<form:label class="col-sm-2 col-form-label" path="title">Project</form:label>
-			    						<div class="col-sm-4">
-			    							<form:select class="btn custom-select text-left" path="projectID">
-			    								<c:choose>
-				    								<c:when test="${not empty project}">
-				    									<form:option value="${project.id}">${project.title}</form:option>
-				    								</c:when>
-				    								<c:otherwise>
-				    									<form:option value="-1">Not selected</form:option>
-				    								</c:otherwise>
-			    								</c:choose>
-			    								<c:forEach items="${projects}" var="item">
-			    									<c:if test="${(empty project) or (item.id != project.id)}">
-			    										<form:option value="${item.id}">${item.title}</form:option>
-			    									</c:if>
-			    								</c:forEach>
-			    								
-			    							</form:select>
-			    						</div>
-			    					</div>
-			    				</div>
-			    				<div class="row my-2">
-			    					<div class="input-group justify-content-center">
-			    						<form:label class="col-sm-2 col-form-label" path="content">Description</form:label>
-			    						<div class="col-sm-4">
-			    							<form:input type="text" class="login-control form-control" value="${idea.description}" path="content"></form:input>
-			    						</div>
-			    					</div>
-			    				</div>
-			    				<div class="row my-2">
-			    					<div class="input-group justify-content-center">
-			    						<form:label class="col-sm-2 col-form-label" path="content">Deadline</form:label>
-			    						<div class="col-sm-4">
-			    							<form:input class="form-control text-center" id="date" path="date" placeholder="MM/DD/YYY" type="text" style="max-width: 125px;"></form:input>
-			    						</div>
-			    					</div>
-			    				</div>
-			    				<div class="row my-3 justify-content-center">
-			    					<div class="col-2">
-				    					<div class="input-group">
-				    						<c:url value="/complete/{$idea.id}" var="completeUrl"/>
-				    						<c:if test="${idea.isComplete()}">
-										    	<a class="btn btn-warning disabled">
-											    	Item Completed
-											    </a>
-										   	</c:if>
-										   	<c:if test="${!idea.isComplete()}">
-										    	<a class="btn btn-warning" href="/complete/${idea.id}">
-											    	Complete Item
-											    </a>
-										   	</c:if>
-				    					</div>
-				    				</div>
-			    				</div>
-			    				<div class="row justify-content-center mt-4">
-			    					<div class="col-4">
-			    						<form:button type="submit" class="btn btn-primary">Save</form:button>
-			    						<a class="btn btn-primary" href="/deleteIdea/${idea.id}">Delete</a>
-		    							<a href="/dashboard">Cancel</a>
-			    					</div>
-		    					</div>
-		    				</form:form> 
+						<div class="row">
+							<div class="col">
+								<h4 class="card-title">Tasks & Ideas</h4>
+								<hr>
+								<ul class="list-group list-group-flush">
+									<c:choose>
+										<c:when test="${not empty ideas}">
+											<c:forEach items="${ideas}" var="idea">
+												 <li class="list-group-item">
+												 	<h4><a href="/idea/${idea.id}">${idea.title}</a></h4>
+												 	<c:if test="${idea.isTask()}">
+											    		<h6 class="mb-0">Due: ${idea.deadline}</h6>
+											    	</c:if>
+											    	<c:if test="${idea.isComplete()}">
+												    	<h6 class="text-warning font-weight-bold">Completed</h6>
+												   	</c:if>
+											    	<h6 class="card-subtitle text-muted mt-2">${idea.description }</h6>
+												 </li>
+											</c:forEach>
+										</c:when>
+										<c:otherwise>
+											<li class="list-group-item">
+												<p>This project doesn't contain any tasks or ideas.</p>
+											</li>
+										</c:otherwise>
+									</c:choose>								
+								</ul>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col">
+								<h4 class="card-title">Notes</h4>
+								<hr>
+								<ul class="list-group list-group-flush">
+									<c:choose>
+										<c:when test="${not empty notes}">
+											<c:forEach items="${notes}" var="note">
+												 <li class="list-group-item">
+												 	<h4><a href="/note/${note.id}">Note (ID:${note.id})</a></h4>
+											    	<h6 class="card-subtitle text-muted">${note.getContent() }</h6>
+												 </li>
+											</c:forEach>
+										</c:when>
+										<c:otherwise>
+											<li class="list-group-item">
+												<p>This project doesn't contain any notes.</p>
+											</li>
+										</c:otherwise>
+									</c:choose>								
+								</ul>
+							</div>
+						</div>
 	    			</div>
 	    		</div>
 	        </div>
@@ -176,21 +153,5 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous"></script>
-	<script>
-	    $(document).ready(function(){
-	      var date_input=$('input[name="date"]'); //our date input has the name "date"
-	      var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
-	      var options={
-	        format: 'mm/dd/yyyy',
-	        container: container,
-	        todayHighlight: true,
-	        autoclose: true,
-	      };
-	      date_input.datepicker(options);
-	      var date = "${idea.getDeadlineString()}";
-	      date_input.datepicker('setDate', date);
-	    })
-	</script>
 </body>
 </html>
