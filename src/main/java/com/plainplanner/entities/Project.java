@@ -89,6 +89,23 @@ public class Project {
 		this.deadline = deadline;
 	}
 	
+	public String getDeadlineString() {
+		Date date = deadline;
+		if (deadline == null) {
+			date = new Date();
+		}
+		return (date.getMonth() + 1) + "/" + date.getDate() + "/" + (date.getYear() + 1900);
+	}
+	
+	private boolean isExpired() {
+		Date today = new Date();
+		today.setHours(0);
+		today.setMinutes(0);
+		today.setSeconds(0);
+		
+		return (deadline.compareTo(today) < 0);
+	}
+	
 	public String getTaskProgress() {
 		String progress = "No tasks assigned to this project.";
 		
