@@ -83,13 +83,20 @@
 						</c:if>
 	    				<c:if test="${not empty projects}">
 	    					<ul class="list-group list-group-flush">
-		    					<c:forEach items="${projects}" var="item">
+		    					<c:forEach items="${projects}" var="project">
 								    <li class="list-group-item">
-								    	<h4><a href="/project/${item.id}">${item.title}</a></h4>
-								    	<c:if test="${not empty item.deadline}">
-								    		<h5 style="font-size: 0.9rem;">Deadline: ${item.deadline}</h5>
+								    	<h4><a href="/project/${project.id}">${project.title}</a></h4>
+								    	<c:if test="${not empty project.deadline}">
+								    		<c:choose>
+												<c:when test="${ project.isExpired() }">
+													<h5 style="font-size: 0.9rem;">Past deadline (${project.deadline})</h5>
+												</c:when>
+												<c:otherwise>
+													<h5 style="font-size: 0.9rem;">Due on ${project.deadline}</h5>
+												</c:otherwise>
+											</c:choose>
 								    	</c:if>		  
-								    	<h6>${item.getTaskProgress()}</h6>
+								    	<h6>${project.getTaskProgress()}</h6>
 								    </li>
 								</c:forEach>
 	    					</ul>

@@ -114,6 +114,7 @@
 												    	<h6 class="text-warning font-weight-bold">Completed</h6>
 												   	</c:if>
 											    	<h6 class="card-subtitle text-muted mt-2">${idea.description }</h6>
+											    	<a class="btn btn-primary btn-sm mt-3" href="/deleteIdea/${idea.id}">Delete</a>
 												 </li>
 											</c:forEach>
 										</c:when>
