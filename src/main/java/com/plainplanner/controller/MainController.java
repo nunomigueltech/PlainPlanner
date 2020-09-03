@@ -241,6 +241,76 @@ public class MainController {
 		return "dashboard";
 	}
 	
+	@RequestMapping("/addNewItem/{referrer}/{referrerId}")
+	public ModelAndView addNewItem(@PathVariable("referrer") String referrer, @PathVariable("referrerId") Long referrerId, @ModelAttribute("newItem") @Valid ItemDTO dto, Model model) {
+		ModelAndView resultingPage = new ModelAndView();
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (!(auth instanceof AnonymousAuthenticationToken)) {
+			User currentUser = userService.getUserByUsername(auth.getName());
+			List<Idea> upcomingTasks = userService.getUpcomingTasks(currentUser);
+			resultingPage.addObject("upcoming", upcomingTasks);
+			
+			if (dto.getTitle().isEmpty()) return resultingPage;
+			
+			switch (dto.getItemType()) {
+				case "idea":
+					Idea newIdea = new Idea(dto.getTitle(), dto.getItemType());
+					if (dto.getContent() != null) {
+						newIdea.setDescription(dto.getContent());
+					}
+					if (dto.getBucketID() != null) {
+						Bucket bucket = bucketService.getBucket(dto.getBucketID());
+						bucketService.addIdea(bucket, newIdea);
+					} else {
+						bucketService.addIdea(currentUser.getDefaultBucket(), newIdea);
+					}
+					if (dto.getProjectID() != null) {
+						Project project = projectService.getProject(dto.getProjectID());
+						projectService.addIdea(project, newIdea);
+					}
+					break;
+				case "project":
+					Project newProject = new Project(dto.getTitle());
+					newProject.setDeadline(dto.getDate());
+					userService.addProject(currentUser, newProject);
+					break;
+				case "task":
+					Idea newTask = new Idea(dto.getTitle(), dto.getItemType());
+					if (dto.getContent() != null) {
+						newTask.setDescription(dto.getContent());
+					}
+					newTask.setDeadline(dto.getDate());
+					if (dto.getBucketID() != null) {
+						Bucket bucket = bucketService.getBucket(dto.getBucketID());
+						bucketService.addIdea(bucket, newTask);
+					} else {
+						bucketService.addIdea(currentUser.getDefaultBucket(), newTask);
+					}
+					if (dto.getProjectID() != null) {
+						Project project = projectService.getProject(dto.getProjectID());
+						projectService.addIdea(project, newTask);
+					}
+					break;
+				case "note":
+					TextNote newNote = new TextNote(dto.getTitle());
+					userService.addTextNote(currentUser, newNote);
+					break;
+			}
+			resultingPage.addObject("added", dto.getItemType());
+			
+			if (referrer.equals("dashboard")) {
+				resultingPage.setViewName("redirect:/dashboard");
+			} else {
+				resultingPage.setViewName("redirect:/" + referrer + "/" + referrerId);
+			}
+		} else {
+			resultingPage.setViewName("redirect:/signin");
+		}
+		
+		return resultingPage;
+	}
+	
 	@RequestMapping("/addProject")
 	public String addProject(Model model) {
 		ItemDTO dto = new ItemDTO();
@@ -340,23 +410,6 @@ public class MainController {
 			redirectAttrs.addAttribute("error", "You don't have permission to access that project.");
 		}
 		return "redirect:/projects";
-	}
-	
-	@RequestMapping("/addIdeaDeadline/{id}")
-	public String addIdeaDeadline(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttrs, HttpServletRequest request) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		User currentUser = userService.getUserByUsername(auth.getName());
-		
-		if (userService.hasIdea(currentUser, id)) {
-			Idea idea = ideaService.getIdea(id);
-			ideaService.updateDeadline(idea, new Date());
-			
-			model.addAttribute("idea", idea);
-			return "redirect:/idea/" + id;
-		} else {
-			redirectAttrs.addAttribute("error", "You don't have permission to access that item.");
-			return "redirect:/dashboard";
-		}
 	}
 	
 	@RequestMapping("/addBucket")

@@ -1,5 +1,6 @@
 package com.plainplanner.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,9 +48,9 @@ public class IdeaController {
 	@Autowired
 	private IdeaService ideaService;
 	
-	@RequestMapping("/addNewItem")
-	public ModelAndView addNewItem(@ModelAttribute("newItem") @Valid ItemDTO dto, Model model) {
-		ModelAndView resultingPage = new ModelAndView("redirect:/dashboard");
+	@RequestMapping("/addNewItem/{referrer}/{referrerId}")
+	public ModelAndView addNewItem(@PathVariable("referrer") String referrer, @PathVariable("referrerId") Long referrerId, @ModelAttribute("newItem") @Valid ItemDTO dto, Model model) {
+		ModelAndView resultingPage = new ModelAndView();
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (!(auth instanceof AnonymousAuthenticationToken)) {
@@ -62,7 +63,19 @@ public class IdeaController {
 			switch (dto.getItemType()) {
 				case "idea":
 					Idea newIdea = new Idea(dto.getTitle(), dto.getItemType());
-					bucketService.addIdea(currentUser.getDefaultBucket(), newIdea);
+					if (dto.getContent() != null) {
+						newIdea.setDescription(dto.getContent());
+					}
+					if (dto.getBucketID() != null) {
+						Bucket bucket = bucketService.getBucket(dto.getBucketID());
+						bucketService.addIdea(bucket, newIdea);
+					} else {
+						bucketService.addIdea(currentUser.getDefaultBucket(), newIdea);
+					}
+					if (dto.getProjectID() != null) {
+						Project project = projectService.getProject(dto.getProjectID());
+						projectService.addIdea(project, newIdea);
+					}
 					break;
 				case "project":
 					Project newProject = new Project(dto.getTitle());
@@ -71,8 +84,20 @@ public class IdeaController {
 					break;
 				case "task":
 					Idea newTask = new Idea(dto.getTitle(), dto.getItemType());
+					if (dto.getContent() != null) {
+						newTask.setDescription(dto.getContent());
+					}
 					newTask.setDeadline(dto.getDate());
-					bucketService.addIdea(currentUser.getDefaultBucket(), newTask);
+					if (dto.getBucketID() != null) {
+						Bucket bucket = bucketService.getBucket(dto.getBucketID());
+						bucketService.addIdea(bucket, newTask);
+					} else {
+						bucketService.addIdea(currentUser.getDefaultBucket(), newTask);
+					}
+					if (dto.getProjectID() != null) {
+						Project project = projectService.getProject(dto.getProjectID());
+						projectService.addIdea(project, newTask);
+					}
 					break;
 				case "note":
 					TextNote newNote = new TextNote(dto.getTitle());
@@ -80,6 +105,12 @@ public class IdeaController {
 					break;
 			}
 			resultingPage.addObject("added", dto.getItemType());
+			
+			if (referrer.equals("dashboard")) {
+				resultingPage.setViewName("redirect:/dashboard");
+			} else {
+				resultingPage.setViewName("redirect:/" + referrer + "/" + referrerId);
+			}
 		} else {
 			resultingPage.setViewName("redirect:/signin");
 		}
@@ -87,8 +118,8 @@ public class IdeaController {
 		return resultingPage;
 	}
 	
-	@RequestMapping("/updateIdea")
-	public String updateIdea(@ModelAttribute("item") @Valid ItemDTO dto, Model model) {
+	@RequestMapping("/updateIdea/{referrer}/{referrerId}/{ideaId}")
+	public String updateIdea(@PathVariable("referrer") String referrer, @PathVariable("referrerId") Long referrerId, @PathVariable("ideaId") Long ideaId, @ModelAttribute("item") @Valid ItemDTO dto, Model model) {
 		if (dto == null) return "/dashboard";
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -115,29 +146,57 @@ public class IdeaController {
 				projectService.addIdea(targetProject, idea);
 			}
 			
-			return "redirect:/idea/" + dto.getId();
+			return "redirect:/idea/" + referrer + "/" + referrerId + "/" + ideaId;
 		} else {
-			return "/dashboard";
+			return "redirect:/dashboard";
 		}
 
 	}
 	
-	@RequestMapping("/idea/{id}")
-	public String idea(@PathVariable("id") Long id, Model model, @ModelAttribute("redirectURL") String redirectURL, RedirectAttributes redirectAttrs, HttpServletRequest request) {
+	@RequestMapping("/addIdea/{referrer}/{referrerId}")
+	public String addIdea(@PathVariable("referrer") String referrer, @PathVariable("referrerId") Long referrerId, Model model, @ModelAttribute("redirectURL") String redirectURL, RedirectAttributes redirectAttrs, HttpServletRequest request) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User currentUser = userService.getUserByUsername(auth.getName());
 		
-		if (userService.hasIdea(currentUser, id)) {
+		ItemDTO dto = new ItemDTO();
+		model.addAttribute("item", dto);
+		model.addAttribute("referrer", referrer);
+		model.addAttribute("referrerId", referrerId);
+		return "addIdea";
+	}
+	
+	@RequestMapping("/idea/{referrer}/{referrerId}/{ideaId}")
+	public String idea(@PathVariable("referrer") String referrer, @PathVariable("referrerId") Long referrerId, @PathVariable("ideaId") Long ideaId, Model model, @ModelAttribute("redirectURL") String redirectURL, RedirectAttributes redirectAttrs, HttpServletRequest request) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User currentUser = userService.getUserByUsername(auth.getName());
+		
+		if (userService.hasIdea(currentUser, ideaId)) {
 			ItemDTO dto = new ItemDTO();
 			model.addAttribute("item", dto);
 
-			Idea idea = ideaService.getIdea(id);
-			model.addAttribute("idea", ideaService.getIdea(id));
+			Idea idea = ideaService.getIdea(ideaId);
+			model.addAttribute("idea", ideaService.getIdea(ideaId));
 			model.addAttribute("bucket", ideaService.getContainingBucket(idea));
 			model.addAttribute("buckets", currentUser.getBuckets());
 			model.addAttribute("project", ideaService.getContainingProject(idea));
 			model.addAttribute("projects", currentUser.getProjects());
-			model.addAttribute("redirectURL", redirectURL);
+			model.addAttribute("referrer", referrer);
+			model.addAttribute("referrerId", referrerId);
+			model.addAttribute("referralURL", referrer + "/" + referrerId);
+			switch (referrer) {
+				case "dashboard":
+					model.addAttribute("redirectURL", "dashboard");
+					break;
+				case "project":
+					model.addAttribute("redirectURL", "project/" + referrerId);
+					break;
+				case "bucket":
+					model.addAttribute("redirectURL", "bucket/" + referrerId);
+					break;
+				default:
+					redirectAttrs.addAttribute("error", "You don't have permission to access that item.");
+					return "redirect:/dashboard";
+			}
 			return "idea";
 		} else {
 			redirectAttrs.addAttribute("error", "You don't have permission to access that item.");
@@ -145,46 +204,35 @@ public class IdeaController {
 		}
 	}
 	
-	@RequestMapping("/projectIdea/{projectId}/{ideaId}")
-	public String projectIdea(@PathVariable("projectId") Long projectId, @PathVariable("ideaId") Long ideaId, Model model, RedirectAttributes redirectAttrs, HttpServletRequest request) {
-		redirectAttrs.addFlashAttribute("redirectURL", "/project/" + projectId);
-		return "redirect:/idea/" + ideaId;
-	}
-	
-	@RequestMapping("/bucketIdea/{bucketId}/{ideaId}")
-	public String bucketIdea(@PathVariable("bucketId") Long bucketId, @PathVariable("ideaId") Long ideaId, Model model, RedirectAttributes redirectAttrs, HttpServletRequest request) {
-		redirectAttrs.addFlashAttribute("redirectURL", "/bucket/" + bucketId);
-		return "redirect:/idea/" + ideaId;
-	}
-	
-	@RequestMapping("/dashboardIdea/{ideaId}")
-	public String projectIdea( @PathVariable("ideaId") Long ideaId, Model model, RedirectAttributes redirectAttrs, HttpServletRequest request) {
-		redirectAttrs.addFlashAttribute("redirectURL", "/dashboard");
-		return "redirect:/idea/" + ideaId;
-	}
-	
-	@RequestMapping("/complete/{id}")
-	public String complete(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttrs, HttpServletRequest request) {
+	@RequestMapping("/complete/{newReferrer}/{referrer}/{referrerId}/{ideaId}")
+	public String complete(@PathVariable("newReferrer") String newReferrer, @PathVariable("referrer") String referrer, @PathVariable("referrerId") Long referrerId, @PathVariable("ideaId") Long ideaId, Model model, RedirectAttributes redirectAttrs, HttpServletRequest request) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User currentUser = userService.getUserByUsername(auth.getName());
 		
-		if (userService.hasIdea(currentUser, id)) {
-			Idea idea = ideaService.getIdea(id);
+		if (userService.hasIdea(currentUser, ideaId)) {
+			Idea idea = ideaService.getIdea(ideaId);
 			ideaService.completeIdea(idea);
-			return "redirect:" + request.getHeader("referer");
+			
+			if (newReferrer.equals("dashboard")) {
+				return "redirect:/dashboard";
+			} else if (newReferrer.equals("idea")) {
+				return "redirect:/idea/" + referrer + "/" + referrerId + "/" + ideaId;
+			} else {
+				return "redirect:/" + referrer + "/" + referrerId + "/" + ideaId;
+			}
 		} else {
 			redirectAttrs.addAttribute("error", "You don't have permission to access that item.");
 			return "redirect:/dashboard";
 		}
 	}
 	
-	@RequestMapping("/deleteIdea/{id}")
-	public String deleteIdea(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttrs, HttpServletRequest request) {
+	@RequestMapping("/deleteIdea/{referrer}/{referrerId}/{ideaId}")
+	public String deleteIdea(@PathVariable("referrer") String referrer, @PathVariable("referrerId") Long referrerId, @PathVariable("ideaId") Long ideaId, Model model, RedirectAttributes redirectAttrs, HttpServletRequest request) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User currentUser = userService.getUserByUsername(auth.getName());
 		
-		if (userService.hasIdea(currentUser, id)) {
-			Idea idea = ideaService.getIdea(id);
+		if (userService.hasIdea(currentUser, ideaId)) {
+			Idea idea = ideaService.getIdea(ideaId);
 			Bucket targetBucket = ideaService.getContainingBucket(idea);
 			Project targetProject = ideaService.getContainingProject(idea);
 			bucketService.removeIdea(targetBucket, idea);
@@ -192,6 +240,27 @@ public class IdeaController {
 		} else {
 			redirectAttrs.addAttribute("error", "You don't have permission to access that item.");
 		}
-		return "redirect:/dashboard";
+		if (referrer.equals("dashboard")) {
+			return "redirect:/dashboard";
+		} else {
+			return "redirect:/" + referrer + "/" + referrerId;
+		}
+	}
+	
+	@RequestMapping("/addIdeaDeadline/{referrer}/{referrerId}/{ideaId}")
+	public String addIdeaDeadline(@PathVariable("referrer") String referrer, @PathVariable("referrerId") Long referrerId, @PathVariable("ideaId") Long ideaId, Model model, RedirectAttributes redirectAttrs, HttpServletRequest request) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User currentUser = userService.getUserByUsername(auth.getName());
+		
+		if (userService.hasIdea(currentUser, ideaId)) {
+			Idea idea = ideaService.getIdea(ideaId);
+			ideaService.updateDeadline(idea, new Date());
+			
+			model.addAttribute("idea", idea);
+			return "redirect:/idea/" + referrer + "/" + referrerId + "/" + ideaId;
+		} else {
+			redirectAttrs.addAttribute("error", "You don't have permission to access that item.");
+			return "redirect:/dashboard";
+		}
 	}
 }
