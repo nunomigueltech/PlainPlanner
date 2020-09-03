@@ -99,8 +99,9 @@
 	    			<div class="card-body">
 						<div class="row">
 							<div class="col">
-								<h4 class="card-title">Tasks & Ideas 
-								<a class="btn btn-primary btn-sm mt-3" href="/addIdea/project/${project.id}">Add New Idea</a>
+								<h4 class="card-title d-flex align-items-center">Tasks & Ideas 
+								<a class="btn btn-primary btn-sm ml-3" href="/addIdea/project/${project.id}"><i class="fas fa-plus-circle"></i> New Idea</a>
+								<a class="btn btn-primary btn-sm ml-1" href="/addTask/project/${project.id}"><i class="fas fa-plus-circle"></i> New Task</a>
 								</h4>
 								<hr>
 								<ul class="list-group list-group-flush">
@@ -116,7 +117,7 @@
 												    	<h6 class="text-warning font-weight-bold">Completed</h6>
 												   	</c:if>
 											    	<h6 class="card-subtitle text-muted mt-2">${idea.description }</h6>
-											    	<a class="btn btn-primary btn-sm mt-3" href="/deleteIdea/project/${project.id}/${idea.id}">Delete</a>
+											    	<a class="btn btn-primary btn-sm mt-3" href="/deleteIdea/project/${project.id}/${idea.id}"><i class="fas fa-trash"></i> Delete</a>
 												 </li>
 											</c:forEach>
 										</c:when>
