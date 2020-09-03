@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import com.plainplanner.validation.ValidDate;
 
 @ValidDate
-public class NewItemDTO {
+public class ItemDTO {
 	
 	private Long id;
 	
