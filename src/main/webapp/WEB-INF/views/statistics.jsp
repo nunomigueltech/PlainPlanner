@@ -73,6 +73,7 @@
 	    				<ul>
 	    					<li>You have a total of <strong>${ideas}</strong> ideas.</li>
 	    					<li>Of those ideas, <strong>${tasks}</strong> have been scheduled and turned into actionable tasks.</li>
+	    					<li>Thus far, you have been able to complete <strong>${completedTasks}%</strong> of your scheduled tasks.</li>
 	    					<li>You have created <strong>${buckets-1}</strong> of your very own buckets. The default bucket doesn't count!</li>
 	    					<li>In total, you have created <strong>${projects}</strong> projects.</li>
 	    				</ul>
