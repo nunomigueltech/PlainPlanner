@@ -97,7 +97,7 @@
 			    				<div class="row mt-4 justify-content-center">
 			    					<div class="col-6 col-md-4 d-flex justify-content-center align-items-center">
 			    						<form:button type="submit" class="btn btn-primary mx-2">Add</form:button>
-		    							<a href="/${referralURL}" class="mx-2">Cancel</a>
+		    							<a href="/${referrer}/${referrerId}" class="mx-2">Cancel</a>
 			    					</div>
 		    					</div>
 		    				</form:form> 
