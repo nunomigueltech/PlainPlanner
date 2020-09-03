@@ -12,9 +12,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a4e465149a.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" type="text/css" href="../resources/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw==" crossorigin="anonymous" />
-    <link rel="stylesheet" type="text/css" href="../resources/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/style.css">
     <title>PlainPlanner - Edit Item</title>
 </head>
 <body>
@@ -68,7 +68,7 @@
 	    				<h2>Viewing "${idea.title}"</h2>
 	    			</div>
 	    			<div class="card-body">
-							<form:form action="/updateIdea" method="post" modelAttribute="item">
+							<form:form action="/updateIdea/${referralURL}/${idea.id}" method="post" modelAttribute="item">
 								<form:hidden path="id" value="${idea.id}" />
 								<div class="row my-2">
 			    					<div class="input-group justify-content-center">
@@ -143,7 +143,7 @@
 													<form:input class="form-control text-center" id="date" path="date" placeholder="MM/DD/YYY" type="text" style="max-width: 125px;"></form:input>
 												</c:when>
 												<c:otherwise>
-													<a href="/addIdeaDeadline/${idea.id}" class="btn btn-outline-primary">Add deadline</a>
+													<a href="/addIdeaDeadline/${referralURL}/${idea.id}" class="btn btn-outline-primary">Add deadline</a>
 												</c:otherwise>
 											</c:choose>			    						</div>
 			    					</div>
@@ -151,14 +151,14 @@
 			    				<div class="row my-3 justify-content-center">
 			    					<div class="col-6 col-md-4">
 				    					<div class="input-group d-flex justify-content-center align-items-center">
-				    						<c:url value="/complete/{$idea.id}" var="completeUrl"/>
+				    						<c:url value="/complete/idea/${referralURL}/${idea.id}" var="completeUrl"/>
 				    						<c:if test="${idea.isComplete()}">
 										    	<a class="btn btn-warning disabled">
 											    	Item Completed
 											    </a>
 										   	</c:if>
 										   	<c:if test="${!idea.isComplete()}">
-										    	<a class="btn btn-warning" href="/complete/${idea.id}">
+										    	<a class="btn btn-warning" href="/complete/idea/${referralURL}/${idea.id}">
 											    	Complete Item
 											    </a>
 										   	</c:if>
@@ -168,8 +168,8 @@
 			    				<div class="row justify-content-center mt-4">
 			    					<div class="col-4 d-flex justify-content-center align-items-center">
 			    						<form:button type="submit" class="btn btn-primary mx-sm-2">Save</form:button>
-			    						<a class="btn btn-primary mx-sm-2" href="/deleteIdea/${idea.id}">Delete</a>
-		    							<a href="${redirectURL}" class="mx-sm-2">Cancel</a>
+			    						<a class="btn btn-primary mx-sm-2" href="/deleteIdea/${referralURL}/${idea.id}">Delete</a>
+		    							<a href="/${redirectURL}" class="mx-sm-2">Cancel</a>
 			    					</div>
 		    					</div>
 		    				</form:form> 

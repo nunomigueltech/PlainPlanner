@@ -72,7 +72,7 @@
 				</c:if>
 	    		<div class="card">
 	    			<div class="card-body pb-2 pt-3" style="border-bottom: 10px solid #3A3535;">
-	    			 	<form:form action="/addNewItem" method="post" modelAttribute="newItem">
+	    			 	<form:form action="/addNewItem/dashboard/1" method="post" modelAttribute="newItem">
 	    					<div class="input-group">
 	    						<form:input type="text" class="form-control" placeholder="Record a thought.." path="title"></form:input>
 	    						<form:input class="form-control text-center" id="date" path="date" placeholder="MM/DD/YYY" type="text" style="max-width: 125px;"></form:input>
@@ -106,19 +106,19 @@
 	    					<ul class="list-group list-group-flush">
 		    					<c:forEach items="${upcoming}" var="item">
 								    <li class="list-group-item">
-								    	<h4><a href="/dashboardIdea/${item.id}">${item.title}</a></h4>
+								    	<h4><a href="/idea/dashboard/1/${item.id}">${item.title}</a></h4>
 								    	<h6>Due: ${item.deadline}</h6>
 								    	<c:if test="${item.isComplete()}">
 									    	<h6 class="text-alert">Completed</h6>
 									   	</c:if>
 								    	<h6 class="card-subtitle text-muted">${item.description }</h6>
 								    	<c:if test="${!item.isComplete()}">
-									    	<a class="btn btn-primary btn-sm mt-3 text-white" href="/complete/${item.id}">
+									    	<a class="btn btn-primary btn-sm mt-3 text-white" href="/complete/dashboard/dashboard/1/${item.id}">
 								    			Complete
 								    		</a>
 									   	</c:if>
 								    	
-								    	<a class="btn btn-primary btn-sm mt-3 text-white" href="/deleteIdea/${item.id}">Delete</a>
+								    	<a class="btn btn-primary btn-sm mt-3 text-white" href="/deleteIdea/dashboard/1/${item.id}">Delete</a>
 								    </li>
 								</c:forEach>
 	    					</ul>

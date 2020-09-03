@@ -12,9 +12,10 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a4e465149a.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" type="text/css" href="../resources/css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="../resources/css/style.css">
-    <title>PlainPlanner - Project</title>
+    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw==" crossorigin="anonymous" />
+    <link rel="stylesheet" type="text/css" href="/resources/css/style.css">
+    <title>PlainPlanner - Add Idea</title>
 </head>
 <body>
 	<div id="wrapper">
@@ -64,94 +65,42 @@
 	    	<div class="container">
 	    		<div class="card">
 	    			<div class="card-header text-white text-center" style="background-color: #3A3535">
-						<div class="row">
-							<div class="col">
-								<h2>${project.title}</h2>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col">
-								<h6 class="card-subtitle text-info">Created on ${project.dateCreated}</h6>
-							</div>
-						</div>
-						<c:if test="${not empty project.deadline}">
-							<div class="row">
-								<div class="col">
-									<c:choose>
-										<c:when test="${ project.isExpired() }">
-											<h6 class="card-subtitle text-danger pt-1">Past deadline (${project.deadline})</h6>
-										</c:when>
-										<c:otherwise>
-											<h6 class="card-subtitle text-warning pt-1">Due on ${project.deadline}</h6>
-										</c:otherwise>
-									</c:choose>
-								</div>
-							</div>
-						</c:if>
-						<div class="row justify-content-center">
-							<div class="col-6 col-sm-12">
-								<a class="btn btn-primary btn-sm m-2" href="/projects">Back to Projects</a>
-								<a class="btn btn-primary btn-sm m-2" href="/editProject/${project.id}"><i class="fas fa-edit"></i> Edit Project</a>
-								<a class="btn btn-primary btn-sm m-2" href="/deleteProject/${project.id}"><i class="fas fa-trash"></i> Delete Project</a>
-							</div>
-						</div>
+	    				<h2>Create New Idea</h2>
 	    			</div>
 	    			<div class="card-body">
-						<div class="row">
-							<div class="col">
-								<h4 class="card-title">Tasks & Ideas 
-								<a class="btn btn-primary btn-sm mt-3" href="/addIdea/project/${project.id}">Add New Idea</a>
-								</h4>
-								<hr>
-								<ul class="list-group list-group-flush">
-									<c:choose>
-										<c:when test="${not empty ideas}">
-											<c:forEach items="${ideas}" var="idea">
-												 <li class="list-group-item">
-												 	<h4><a href="/idea/project/${project.id}/${idea.id}">${idea.title}</a></h4>
-												 	<c:if test="${idea.isTask()}">
-											    		<h6 class="mb-0">Due: ${idea.deadline}</h6>
-											    	</c:if>
-											    	<c:if test="${idea.isComplete()}">
-												    	<h6 class="text-warning font-weight-bold">Completed</h6>
-												   	</c:if>
-											    	<h6 class="card-subtitle text-muted mt-2">${idea.description }</h6>
-											    	<a class="btn btn-primary btn-sm mt-3" href="/deleteIdea/project/${project.id}/${idea.id}">Delete</a>
-												 </li>
-											</c:forEach>
-										</c:when>
-										<c:otherwise>
-											<li class="list-group-item">
-												<p>This project doesn't contain any tasks or ideas.</p>
-											</li>
-										</c:otherwise>
-									</c:choose>								
-								</ul>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col">
-								<h4 class="card-title">Notes</h4>
-								<hr>
-								<ul class="list-group list-group-flush">
-									<c:choose>
-										<c:when test="${not empty notes}">
-											<c:forEach items="${notes}" var="note">
-												 <li class="list-group-item">
-												 	<h4><a href="/note/${note.id}">Note (ID:${note.id})</a></h4>
-											    	<h6 class="card-subtitle text-muted">${note.getContent() }</h6>
-												 </li>
-											</c:forEach>
-										</c:when>
-										<c:otherwise>
-											<li class="list-group-item">
-												<p>This project doesn't contain any notes.</p>
-											</li>
-										</c:otherwise>
-									</c:choose>								
-								</ul>
-							</div>
-						</div>
+							<form:form action="/addNewItem/${referrer}/${referrerId}" method="post" modelAttribute="item">
+								<form:hidden path="itemType" value="idea" />
+								<c:choose>
+									<c:when test="${referrer == 'bucket'}">
+										<form:hidden path="bucketID" value="${referrerId}" />
+									</c:when>
+									<c:otherwise>
+										<form:hidden path="projectID" value="${referrerId}" />
+									</c:otherwise>
+								</c:choose>
+								<div class="row my-2">
+			    					<div class="input-group justify-content-center">
+			    						<form:label class="col-4 col-md-2 col-form-label" path="title">Title</form:label>
+			    						<div class="col-8 col-md-4">
+			    							<form:input type="text" class="login-control form-control" placeholder="Enter your idea here" path="title"></form:input>
+			    						</div>
+			    					</div>
+			    				</div>
+			    				<div class="row my-2">
+			    					<div class="input-group justify-content-center">
+			    						<form:label class="col-4 col-md-2 col-form-label" path="content">Description</form:label>
+			    						<div class="col-8 col-md-4">
+			    							<form:input type="text" class="login-control form-control" placeholder="Enter a description for your idea" path="content"></form:input>
+			    						</div>
+			    					</div>
+			    				</div>
+			    				<div class="row mt-4 justify-content-center">
+			    					<div class="col-6 col-md-4 d-flex justify-content-center align-items-center">
+			    						<form:button type="submit" class="btn btn-primary mx-2">Add</form:button>
+		    							<a href="/${referralURL}" class="mx-2">Cancel</a>
+			    					</div>
+		    					</div>
+		    				</form:form> 
 	    			</div>
 	    		</div>
 	        </div>
@@ -163,5 +112,20 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous"></script>
+	<script>
+	    $(document).ready(function(){
+	      var date_input=$('input[name="date"]'); //our date input has the name "date"
+	      var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
+	      var options={
+	        format: 'mm/dd/yyyy',
+	        container: container,
+	        todayHighlight: true,
+	        autoclose: true,
+	      };
+	      date_input.datepicker(options);
+	      date_input.datepicker('setDate', 'now');
+	    })
+	</script>
 </body>
 </html>

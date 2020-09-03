@@ -109,7 +109,7 @@
 										<c:when test="${not empty ideas}">
 											<c:forEach items="${ideas}" var="idea">
 												 <li class="list-group-item">
-												 	<h4><a href="/bucketIdea/${bucket.id}/${idea.id}">${idea.title}</a></h4>
+												 	<h4><a href="/idea/bucket/${bucket.id}/${idea.id}">${idea.title}</a></h4>
 												 	<c:if test="${idea.isTask()}">
 											    		<h6 class="mb-0">Due: ${idea.deadline}</h6>
 											    	</c:if>
