@@ -49,6 +49,7 @@ public class ProjectService implements IProjectService {
 	}
 
 	@Override
+	@Transactional
 	public boolean removeProject(Project project) {
 		if (project == null) return true;
 		
@@ -57,6 +58,7 @@ public class ProjectService implements IProjectService {
 	}
 
 	@Override
+	@Transactional
 	public boolean removeProject(Long id) {
 		if (id == null) return true;
 		
