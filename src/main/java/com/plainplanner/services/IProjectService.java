@@ -1,5 +1,6 @@
 package com.plainplanner.services;
 
+import java.util.Date;
 import java.util.List;
 
 import com.plainplanner.entities.Idea;
@@ -18,4 +19,6 @@ public interface IProjectService {
 	void addNote(Project project, Note note);
 	void addIdea(Project project, Idea idea);
 	void removeIdea(Project project, Idea idea);
+	void updateTitle(Project project, String title);
+	void updateDeadline(Project project, Date deadline);
 }

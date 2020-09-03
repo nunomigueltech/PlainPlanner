@@ -1,5 +1,6 @@
 package com.plainplanner.services;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,5 +100,21 @@ public class ProjectService implements IProjectService {
 			project.getIdeas().remove(idea);
 		}
 		
+	}
+
+	@Override
+	@Transactional
+	public void updateDeadline(Project project, Date deadline) {
+		if (project == null || deadline == null) return;
+		
+		project.setDeadline(deadline);
+	}
+
+	@Override
+	@Transactional
+	public void updateTitle(Project project, String title) {
+		if (project == null || title == null) return;
+		
+		project.setTitle(title);
 	}
 }
