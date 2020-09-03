@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 
 import com.plainplanner.services.CustomUserDetailsService;
 
@@ -58,12 +59,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.expiredUrl("/expiredSignin");
 	}
 	
-	@Override
-	public void configure(WebSecurity web) {
-		web
-			.ignoring()
-			.antMatchers("/resources/**");
-	}
+//	@Override
+//	public void configure(WebSecurity web) {
+//		web
+//			.ignoring()
+//			.antMatchers("/resources/**");
+//	}
+	
+
 	
 	@Override
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
