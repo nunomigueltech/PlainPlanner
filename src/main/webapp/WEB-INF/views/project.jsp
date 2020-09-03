@@ -77,15 +77,22 @@
 						<c:if test="${not empty project.deadline}">
 							<div class="row">
 								<div class="col">
-									<h6 class="card-subtitle text-warning pt-1">Due on ${project.deadline}</h6>
+									<c:choose>
+										<c:when test="${ project.isExpired() }">
+											<h6 class="card-subtitle text-danger pt-1">Past deadline (${project.deadline})</h6>
+										</c:when>
+										<c:otherwise>
+											<h6 class="card-subtitle text-warning pt-1">Due on ${project.deadline}</h6>
+										</c:otherwise>
+									</c:choose>
 								</div>
 							</div>
 						</c:if>
 						<div class="row justify-content-center">
 							<div class="col-6 col-sm-12">
 								<a class="btn btn-primary btn-sm m-2" href="/projects">Back to Projects</a>
-								<a class="btn btn-primary btn-sm m-2" href="/projects"><i class="fas fa-edit"></i> Edit Project</a>
-								<a class="btn btn-primary btn-sm m-2" href="/projects"><i class="fas fa-trash"></i> Delete Project</a>
+								<a class="btn btn-primary btn-sm m-2" href="/editProject/${project.id}"><i class="fas fa-edit"></i> Edit Project</a>
+								<a class="btn btn-primary btn-sm m-2" href="/deleteProject/${project.id}"><i class="fas fa-trash"></i> Delete Project</a>
 							</div>
 						</div>
 	    			</div>

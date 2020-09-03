@@ -97,13 +97,13 @@ public class Project {
 		return (date.getMonth() + 1) + "/" + date.getDate() + "/" + (date.getYear() + 1900);
 	}
 	
-	private boolean isExpired() {
+	public boolean isExpired() {
 		Date today = new Date();
 		today.setHours(0);
 		today.setMinutes(0);
 		today.setSeconds(0);
 		
-		return (deadline.compareTo(today) < 0);
+		return (deadline.compareTo(today) <= 0);
 	}
 	
 	public String getTaskProgress() {

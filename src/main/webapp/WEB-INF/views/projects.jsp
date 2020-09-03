@@ -78,6 +78,9 @@
 	    				<c:if test="${not empty param.success}">
 							<div class="alert alert-success">${param.success}</div>
 						</c:if>
+						 <c:if test="${not empty param.error}">
+							<div class="alert alert-danger">${param.error}</div>
+						</c:if>
 	    				<c:if test="${not empty projects}">
 	    					<ul class="list-group list-group-flush">
 		    					<c:forEach items="${projects}" var="item">
