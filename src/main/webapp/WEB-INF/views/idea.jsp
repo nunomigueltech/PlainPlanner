@@ -72,16 +72,16 @@
 								<form:hidden path="id" value="${idea.id}" />
 								<div class="row my-2">
 			    					<div class="input-group justify-content-center">
-			    						<form:label class="col-sm-2 col-form-label" path="title">Title</form:label>
-			    						<div class="col-sm-4">
+			    						<form:label class="col-6 col-sm-2 col-form-label" path="title">Title</form:label>
+			    						<div class="col-6 col-sm-4">
 			    							<form:input type="text" class="login-control form-control" value="${idea.title}" path="title"></form:input>
 			    						</div>
 			    					</div>
 			    				</div>
 			    				<div class="row my-2">
 			    					<div class="input-group justify-content-center">
-			    						<form:label class="col-sm-2 col-form-label" path="title">Bucket</form:label>
-			    						<div class="col-sm-4">
+			    						<form:label class="col-6 col-sm-2 col-form-label" path="title">Bucket</form:label>
+			    						<div class="col-6 col-sm-4">
 			    							<form:select class="btn custom-select text-left" path="bucketID">
 			    								<c:choose>
 				    								<c:when test="${not empty bucket}">
@@ -103,8 +103,8 @@
 			    				</div>
 			    				<div class="row my-2">
 			    					<div class="input-group justify-content-center">
-			    						<form:label class="col-sm-2 col-form-label" path="title">Project</form:label>
-			    						<div class="col-sm-4">
+			    						<form:label class="col-6 col-sm-2 col-form-label" path="title">Project</form:label>
+			    						<div class="col-6 col-sm-4">
 			    							<form:select class="btn custom-select text-left" path="projectID">
 			    								<c:choose>
 				    								<c:when test="${not empty project}">
@@ -126,23 +126,29 @@
 			    				</div>
 			    				<div class="row my-2">
 			    					<div class="input-group justify-content-center">
-			    						<form:label class="col-sm-2 col-form-label" path="content">Description</form:label>
-			    						<div class="col-sm-4">
+			    						<form:label class="col-6 col-sm-2 col-form-label" path="content">Description</form:label>
+			    						<div class="col-6 col-sm-4">
 			    							<form:input type="text" class="login-control form-control" value="${idea.description}" path="content"></form:input>
 			    						</div>
 			    					</div>
 			    				</div>
 			    				<div class="row my-2">
 			    					<div class="input-group justify-content-center">
-			    						<form:label class="col-sm-2 col-form-label" path="content">Deadline</form:label>
-			    						<div class="col-sm-4">
-			    							<form:input class="form-control text-center" id="date" path="date" placeholder="MM/DD/YYY" type="text" style="max-width: 125px;"></form:input>
-			    						</div>
+			    						<form:label class="col-6 col-sm-2 col-form-label" path="content">Deadline</form:label>
+			    						<div class="col-6 col-sm-4">
+											<c:choose>
+												<c:when test="${ not empty idea.deadline }">
+													<form:input class="form-control text-center" id="date" path="date" placeholder="MM/DD/YYY" type="text" style="max-width: 125px;"></form:input>
+												</c:when>
+												<c:otherwise>
+													<a href="/addIdeaDeadline/${idea.id}" class="btn btn-outline-primary">Add deadline</a>
+												</c:otherwise>
+											</c:choose>			    						</div>
 			    					</div>
 			    				</div>
 			    				<div class="row my-3 justify-content-center">
-			    					<div class="col-2">
-				    					<div class="input-group">
+			    					<div class="col-6 col-md-4">
+				    					<div class="input-group d-flex justify-content-center align-items-center">
 				    						<c:url value="/complete/{$idea.id}" var="completeUrl"/>
 				    						<c:if test="${idea.isComplete()}">
 										    	<a class="btn btn-warning disabled">
@@ -158,10 +164,10 @@
 				    				</div>
 			    				</div>
 			    				<div class="row justify-content-center mt-4">
-			    					<div class="col-4">
-			    						<form:button type="submit" class="btn btn-primary">Save</form:button>
-			    						<a class="btn btn-primary" href="/deleteIdea/${idea.id}">Delete</a>
-		    							<a href="/dashboard">Cancel</a>
+			    					<div class="col-4 d-flex justify-content-center align-items-center">
+			    						<form:button type="submit" class="btn btn-primary mx-sm-2">Save</form:button>
+			    						<a class="btn btn-primary mx-sm-2" href="/deleteIdea/${idea.id}">Delete</a>
+		    							<a href="/dashboard" class="mx-sm-2">Cancel</a>
 			    					</div>
 		    					</div>
 		    				</form:form> 
