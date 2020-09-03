@@ -1,5 +1,7 @@
 package com.plainplanner.controller;
 
+import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -26,7 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.plainplanner.dto.NewItemDTO;
+import com.plainplanner.dto.ItemDTO;
 import com.plainplanner.dto.UserDTO;
 import com.plainplanner.entities.Bucket;
 import com.plainplanner.entities.Idea;
@@ -146,7 +148,8 @@ public class MainController {
 		model.addAttribute("ideas", ideas.size());
 		model.addAttribute("tasks", tasks.size());
 		if (tasks.size() > 0) {
-			model.addAttribute("completedTasks", completedTasks.size() / tasks.size());
+			double completedTaskPercentage = ((double) completedTasks.size() / tasks.size()) * 100;
+			model.addAttribute("completedTasks", new DecimalFormat("#.##").format(completedTaskPercentage));
 		}
 		model.addAttribute("buckets", buckets.size());
 		model.addAttribute("projects", projects.size());
@@ -226,7 +229,7 @@ public class MainController {
 	
 	@RequestMapping("/dashboard")
 	public String handleDashboard(Model model) {
-		NewItemDTO dto = new NewItemDTO();
+		ItemDTO dto = new ItemDTO();
 		model.addAttribute("newItem", dto);
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -239,7 +242,7 @@ public class MainController {
 	}
 	
 	@RequestMapping("/addNewItem")
-	public ModelAndView addNewItem(@ModelAttribute("newItem") @Valid NewItemDTO dto, Model model) {
+	public ModelAndView addNewItem(@ModelAttribute("newItem") @Valid ItemDTO dto, Model model) {
 		ModelAndView resultingPage = new ModelAndView("redirect:/dashboard");
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -279,7 +282,7 @@ public class MainController {
 	}
 	
 	@RequestMapping("/updateIdea")
-	public String updateIdea(@ModelAttribute("item") @Valid NewItemDTO dto, Model model) {
+	public String updateIdea(@ModelAttribute("item") @Valid ItemDTO dto, Model model) {
 		if (dto == null) return "/dashboard";
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -288,7 +291,9 @@ public class MainController {
 
 		ideaService.updateTitle(idea, dto.getTitle());
 		ideaService.updateDescription(idea, dto.getContent());
-		ideaService.updateDeadline(idea, dto.getDate());
+		if (idea.getDeadline() != null) {
+			ideaService.updateDeadline(idea, dto.getDate());
+		}
 		
 		Bucket containingBucket = ideaService.getContainingBucket(idea);
 		Bucket targetBucket = bucketService.getBucket(dto.getBucketID());
@@ -311,7 +316,7 @@ public class MainController {
 		User currentUser = userService.getUserByUsername(auth.getName());
 		
 		if (userService.hasIdea(currentUser, id)) {
-			NewItemDTO dto = new NewItemDTO();
+			ItemDTO dto = new ItemDTO();
 			model.addAttribute("item", dto);
 			
 			Idea idea = ideaService.getIdea(id);
@@ -362,13 +367,13 @@ public class MainController {
 	
 	@RequestMapping("/addProject")
 	public String addProject(Model model) {
-		NewItemDTO dto = new NewItemDTO();
+		ItemDTO dto = new ItemDTO();
 		model.addAttribute("item", dto);
 		return "addProject";
 	}
 	
 	@RequestMapping("/handleAddProject")
-	public ModelAndView handleAddProject(@ModelAttribute("item") @Valid NewItemDTO dto, Model model) {
+	public ModelAndView handleAddProject(@ModelAttribute("item") @Valid ItemDTO dto, Model model) {
 		ModelAndView resultingPage = new ModelAndView("redirect:/projects");
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -394,7 +399,7 @@ public class MainController {
 		User currentUser = userService.getUserByUsername(auth.getName());
 		
 		if (userService.hasProject(currentUser, id)) {
-			NewItemDTO dto = new NewItemDTO();
+			ItemDTO dto = new ItemDTO();
 			model.addAttribute("item", dto);
 			
 			Project project = projectService.getProject(id);
@@ -405,19 +410,88 @@ public class MainController {
 			return "project";
 		} else {
 			redirectAttrs.addAttribute("error", "You don't have permission to access that project.");
+			return "redirect:/projects";
+		}
+	}
+	
+	@RequestMapping("/editProject/{id}")
+	public String editProject(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttrs, HttpServletRequest request) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User currentUser = userService.getUserByUsername(auth.getName());
+		
+		if (userService.hasProject(currentUser, id)) {
+			ItemDTO dto = new ItemDTO();
+			model.addAttribute("item", dto);
+			
+			Project project = projectService.getProject(id);
+			model.addAttribute("project", project);
+			return "editProject";
+		} else {
+			redirectAttrs.addAttribute("error", "You don't have permission to access that item.");
+			return "redirect:/projects";
+		}
+	}
+	
+	@RequestMapping("/updateProject")
+	public String updateProject(@ModelAttribute("item") @Valid ItemDTO dto, RedirectAttributes redirectAttrs, Model model) {
+		if (dto == null) return "/dashboard";
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User currentUser = userService.getUserByUsername(auth.getName());
+		
+		if (userService.hasProject(currentUser, dto.getId())) {			
+			Project project = projectService.getProject(dto.getId());
+			projectService.updateTitle(project, dto.getTitle());
+			projectService.updateDeadline(project, dto.getDate());
+
+			return "redirect:/project/" + dto.getId();
+		} else {
+			redirectAttrs.addAttribute("error", "You don't have permission to access that item.");
+			return "redirect:/projects";
+		}
+	}
+	
+	@RequestMapping("/deleteProject/{id}")
+	public String deleteProject(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttrs, HttpServletRequest request) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User currentUser = userService.getUserByUsername(auth.getName());
+		
+		if (userService.hasProject(currentUser, id)) {
+			Project project = projectService.getProject(id);
+			userService.removeProject(currentUser, project);
+			projectService.removeProject(project);
+		} else {
+			redirectAttrs.addAttribute("error", "You don't have permission to access that project.");
+		}
+		return "redirect:/projects";
+	}
+	
+	@RequestMapping("/addIdeaDeadline/{id}")
+	public String addIdeaDeadline(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttrs, HttpServletRequest request) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User currentUser = userService.getUserByUsername(auth.getName());
+		
+		if (userService.hasIdea(currentUser, id)) {
+			Idea idea = ideaService.getIdea(id);
+			ideaService.updateDeadline(idea, new Date());
+			
+			model.addAttribute("idea", idea);
+			return "redirect:/idea/" + id;
+		} else {
+			redirectAttrs.addAttribute("error", "You don't have permission to access that item.");
 			return "redirect:/dashboard";
 		}
 	}
 	
 	@RequestMapping("/addBucket")
 	public String addBucket(Model model) {
-		NewItemDTO dto = new NewItemDTO();
+		ItemDTO dto = new ItemDTO();
 		model.addAttribute("item", dto);
 		return "addBucket";
 	}
 	
 	@RequestMapping("/handleAddBucket")
-	public ModelAndView handleAddBucket(@ModelAttribute("item") @Valid NewItemDTO dto, Model model) {
+	public ModelAndView handleAddBucket(@ModelAttribute("item") @Valid ItemDTO dto, Model model) {
 		ModelAndView resultingPage = new ModelAndView("redirect:/buckets");
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -437,15 +511,34 @@ public class MainController {
 		return resultingPage;
 	}
 	
+	@RequestMapping("/bucket/{id}")
+	public String bucket(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttrs, HttpServletRequest request) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User currentUser = userService.getUserByUsername(auth.getName());
+		
+		if (userService.hasBucket(currentUser, id)) {
+			ItemDTO dto = new ItemDTO();
+			model.addAttribute("item", dto);
+			
+			Bucket bucket = bucketService.getBucket(id);
+			model.addAttribute("bucket", bucket);
+			model.addAttribute("ideas", bucket.getIdeas());
+			return "bucket";
+		} else {
+			redirectAttrs.addAttribute("error", "You don't have permission to access that bucket.");
+			return "redirect:/buckets";
+		}
+	}
+	
 	@RequestMapping("/addNote")
 	public String addNote(Model model) {
-		NewItemDTO dto = new NewItemDTO();
+		ItemDTO dto = new ItemDTO();
 		model.addAttribute("item", dto);
 		return "addNote";
 	}
 	
 	@RequestMapping("/handleAddNote")
-	public ModelAndView handleAddNote(@ModelAttribute("item") @Valid NewItemDTO dto, Model model) {
+	public ModelAndView handleAddNote(@ModelAttribute("item") @Valid ItemDTO dto, Model model) {
 		ModelAndView resultingPage = new ModelAndView("redirect:/notes");
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
