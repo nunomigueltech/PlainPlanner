@@ -106,7 +106,7 @@
 	    					<ul class="list-group list-group-flush">
 		    					<c:forEach items="${upcoming}" var="item">
 								    <li class="list-group-item">
-								    	<h4><a href="/idea/${item.id}">${item.title}</a></h4>
+								    	<h4><a href="/dashboardIdea/${item.id}">${item.title}</a></h4>
 								    	<h6>Due: ${item.deadline}</h6>
 								    	<c:if test="${item.isComplete()}">
 									    	<h6 class="text-alert">Completed</h6>

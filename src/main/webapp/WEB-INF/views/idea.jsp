@@ -169,7 +169,7 @@
 			    					<div class="col-4 d-flex justify-content-center align-items-center">
 			    						<form:button type="submit" class="btn btn-primary mx-sm-2">Save</form:button>
 			    						<a class="btn btn-primary mx-sm-2" href="/deleteIdea/${idea.id}">Delete</a>
-		    							<a href="/dashboard" class="mx-sm-2">Cancel</a>
+		    							<a href="${redirectURL}" class="mx-sm-2">Cancel</a>
 			    					</div>
 		    					</div>
 		    				</form:form> 
