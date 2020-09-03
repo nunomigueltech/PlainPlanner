@@ -97,7 +97,7 @@
 	    
 	    <section id="upcoming-section">
 	    	<div class="container">
-	    		<div class="card">
+	    		<div class="card mb-3">
 	    			<div class="card-header text-white text-center" style="background-color: #3A3535">
 	    				<h2 class="card-title">Upcoming Tasks</h2>
 	    			</div>
