@@ -71,24 +71,24 @@
 							<form:form action="/handleAddProject" method="post" modelAttribute="item">
 								<div class="row my-2">
 			    					<div class="input-group justify-content-center">
-			    						<form:label class="col-sm-2 col-form-label" path="title">Title</form:label>
-			    						<div class="col-sm-4">
+			    						<form:label class="col-4 col-md-2 col-form-label" path="title">Title</form:label>
+			    						<div class="col-8 col-md-4">
 			    							<form:input type="text" class="login-control form-control" value="Default Title" path="title"></form:input>
 			    						</div>
 			    					</div>
 			    				</div>
 			    				<div class="row my-2">
 			    					<div class="input-group justify-content-center">
-			    						<form:label class="col-sm-2 col-form-label" path="content">Deadline</form:label>
-			    						<div class="col-sm-4">
+			    						<form:label class="col-4 col-md-2 col-form-label" path="content">Deadline</form:label>
+			    						<div class="col-8 col-md-4">
 			    							<form:input class="form-control text-center" id="date" path="date" placeholder="MM/DD/YYY" type="text" style="max-width: 125px;"></form:input>
 			    						</div>
 			    					</div>
 			    				</div>
 			    				<div class="row justify-content-center mt-4">
-			    					<div class="col-2">
-			    						<form:button type="submit" class="btn btn-primary">Add</form:button>
-		    							<a href="/projects">Cancel</a>
+			    					<div class="col-6 col-md-4 d-flex justify-content-center align-items-center">
+			    						<form:button type="submit" class="btn btn-primary mx-2">Add</form:button>
+		    							<a href="/projects" class="mx-2">Cancel</a>
 			    					</div>
 		    					</div>
 		    				</form:form> 
