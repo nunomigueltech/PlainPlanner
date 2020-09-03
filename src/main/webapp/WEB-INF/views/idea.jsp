@@ -114,12 +114,14 @@
 				    									<form:option value="-1">Not selected</form:option>
 				    								</c:otherwise>
 			    								</c:choose>
+			    								<c:if test="${not empty project}">
+				    								<form:option value="-1">No project</form:option>
+				    							</c:if>
 			    								<c:forEach items="${projects}" var="item">
 			    									<c:if test="${(empty project) or (item.id != project.id)}">
 			    										<form:option value="${item.id}">${item.title}</form:option>
 			    									</c:if>
 			    								</c:forEach>
-			    								
 			    							</form:select>
 			    						</div>
 			    					</div>

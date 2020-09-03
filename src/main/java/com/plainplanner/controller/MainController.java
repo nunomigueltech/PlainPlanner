@@ -287,27 +287,33 @@ public class MainController {
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User currentUser = userService.getUserByUsername(auth.getName());
-		Idea idea = ideaService.getIdea(dto.getId());
+		
+		if (userService.hasIdea(currentUser, dto.getId())) {
+			Idea idea = ideaService.getIdea(dto.getId());
 
-		ideaService.updateTitle(idea, dto.getTitle());
-		ideaService.updateDescription(idea, dto.getContent());
-		if (idea.getDeadline() != null) {
-			ideaService.updateDeadline(idea, dto.getDate());
-		}
-		
-		Bucket containingBucket = ideaService.getContainingBucket(idea);
-		Bucket targetBucket = bucketService.getBucket(dto.getBucketID());
-		bucketService.removeIdea(containingBucket, idea);
-		bucketService.addIdea(targetBucket, idea);
-		
-		if (dto.getProjectID() != -1) {
+			ideaService.updateTitle(idea, dto.getTitle());
+			ideaService.updateDescription(idea, dto.getContent());
+			if (idea.getDeadline() != null) {
+				ideaService.updateDeadline(idea, dto.getDate());
+			}
+			
+			Bucket containingBucket = ideaService.getContainingBucket(idea);
+			Bucket targetBucket = bucketService.getBucket(dto.getBucketID());
+			bucketService.removeIdea(containingBucket, idea);
+			bucketService.addIdea(targetBucket, idea);
+			
 			Project containingProject = ideaService.getContainingProject(idea);
-			Project targetProject = projectService.getProject(dto.getProjectID());
 			projectService.removeIdea(containingProject, idea);
-			projectService.addIdea(targetProject, idea);
+			if (dto.getProjectID() != -1) {
+				Project targetProject = projectService.getProject(dto.getProjectID());
+				projectService.addIdea(targetProject, idea);
+			}
+			
+			return "redirect:/idea/" + dto.getId();
+		} else {
+			return "/dashboard";
 		}
-		
-		return "redirect:/idea/" + dto.getId();
+
 	}
 	
 	@RequestMapping("/idea/{id}")
