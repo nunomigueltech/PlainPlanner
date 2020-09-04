@@ -95,6 +95,18 @@ public class IdeaController {
 		return "addIdea";
 	}
 	
+	@RequestMapping("/addTask/{referrer}/{referrerId}")
+	public String addTask(@PathVariable("referrer") String referrer, @PathVariable("referrerId") Long referrerId, Model model, @ModelAttribute("redirectURL") String redirectURL, RedirectAttributes redirectAttrs, HttpServletRequest request) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User currentUser = userService.getUserByUsername(auth.getName());
+		
+		ItemDTO dto = new ItemDTO();
+		model.addAttribute("item", dto);
+		model.addAttribute("referrer", referrer);
+		model.addAttribute("referrerId", referrerId);
+		return "addTask";
+	}
+	
 	@RequestMapping("/idea/{referrer}/{referrerId}/{ideaId}")
 	public String idea(@PathVariable("referrer") String referrer, @PathVariable("referrerId") Long referrerId, @PathVariable("ideaId") Long ideaId, Model model, @ModelAttribute("redirectURL") String redirectURL, RedirectAttributes redirectAttrs, HttpServletRequest request) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();

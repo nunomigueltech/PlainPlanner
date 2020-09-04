@@ -145,7 +145,8 @@
 												<c:otherwise>
 													<a href="/addIdeaDeadline/${referralURL}/${idea.id}" class="btn btn-outline-primary">Add deadline</a>
 												</c:otherwise>
-											</c:choose>			    						</div>
+											</c:choose>			    						
+										</div>
 			    					</div>
 			    				</div>
 			    				<div class="row my-3 justify-content-center">
