@@ -116,7 +116,14 @@
 											    	<c:if test="${idea.isComplete()}">
 												    	<h6 class="text-warning font-weight-bold">Completed</h6>
 												   	</c:if>
-											    	<h6 class="card-subtitle text-muted mt-2">${idea.description }</h6>
+											    	<c:choose>
+												   		<c:when test="${not empty idea.description }">
+												   			<h6 class="card-subtitle text-muted mt-2">${idea.description }</h6>
+												   		</c:when>
+												   		<c:otherwise>
+												   			<h6 class="card-subtitle text-muted mt-2">No description.</h6>
+												   		</c:otherwise>
+												   	</c:choose>
 											    	<a class="btn btn-primary btn-sm mt-3" href="/deleteIdea/project/${project.id}/${idea.id}"><i class="fas fa-trash"></i> Delete</a>
 												 </li>
 											</c:forEach>

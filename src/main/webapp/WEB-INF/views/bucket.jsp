@@ -102,7 +102,10 @@
 	    				</div>
 						<div class="row">
 							<div class="col">
-								<h4 class="card-title">Tasks & Ideas</h4>
+								<h4 class="card-title">Tasks & Ideas 
+								<a class="btn btn-primary btn-sm ml-3" href="/addIdea/bucket/${bucket.id}"><i class="fas fa-plus-circle"></i> New Idea</a>
+								<a class="btn btn-primary btn-sm ml-1" href="/addTask/bucket/${bucket.id}"><i class="fas fa-plus-circle"></i> New Task</a>
+								</h4>
 								<hr>
 								<ul class="list-group list-group-flush">
 									<c:choose>
@@ -116,7 +119,15 @@
 											    	<c:if test="${idea.isComplete()}">
 												    	<h6 class="text-warning font-weight-bold">Completed</h6>
 												   	</c:if>
-											    	<h6 class="card-subtitle text-muted mt-2">${idea.description }</h6>
+												   	<c:choose>
+												   		<c:when test="${not empty idea.description }">
+												   			<h6 class="card-subtitle text-muted mt-2">${idea.description }</h6>
+												   		</c:when>
+												   		<c:otherwise>
+												   			<h6 class="card-subtitle text-muted mt-2">No description.</h6>
+												   		</c:otherwise>
+												   	</c:choose>
+												   	<a class="btn btn-primary btn-sm mt-3" href="/deleteIdea/bucket/${bucket.id}/${idea.id}"><i class="fas fa-trash"></i> Delete</a>
 												 </li>
 											</c:forEach>
 										</c:when>
