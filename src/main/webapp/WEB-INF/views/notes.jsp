@@ -84,6 +84,7 @@
 								    <li class="list-group-item">
 								    	<h5 style="font-size: 0.9rem;" class="text-info">Created on ${item.dateCreated}</h5>  
 								    	<h6>${item.getContent()}</h6>
+								    	<a class="btn btn-primary btn-sm" href="/editNote/notes/1/${item.id}"><i class="fas fa-edit"></i> Edit</a>
 								    </li>
 								</c:forEach>
 	    					</ul>

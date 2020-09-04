@@ -19,6 +19,7 @@ public interface IProjectService {
 	void addNote(Project project, Note note);
 	void addIdea(Project project, Idea idea);
 	void removeIdea(Project project, Idea idea);
+	void removeNote(Project project, Note note);
 	void updateTitle(Project project, String title);
 	void updateDeadline(Project project, Date deadline);
 }

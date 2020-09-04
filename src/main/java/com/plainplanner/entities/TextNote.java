@@ -16,13 +16,12 @@ public class TextNote extends Note<String> {
 	
 	public TextNote() {}
 	
-	public TextNote(String content) {
-		this.content = content;
-	}
-
-	@Override
 	public String getContent() {
 		return content;
+	}
+	
+	public TextNote(String content) {
+		this.content = content;
 	}
 	
 	public void setContent(String content) {

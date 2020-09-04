@@ -538,4 +538,67 @@ public class MainController {
 		
 		return resultingPage;
 	}
+	
+	@RequestMapping("/editNote/{referrer}/{referrerId}/{noteId}")
+	public String editNote(@PathVariable("referrer") String referrer, @PathVariable("referrerId") Long referrerId, @PathVariable("noteId") Long noteId, Model model, @ModelAttribute("redirectURL") String redirectURL, RedirectAttributes redirectAttrs, HttpServletRequest request) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User currentUser = userService.getUserByUsername(auth.getName());
+		
+		if (userService.hasNote(currentUser, noteId)) {
+			ItemDTO dto = new ItemDTO();
+			model.addAttribute("item", dto);
+
+			Note note = textNoteService.getTextNote(noteId);
+			model.addAttribute("note", note);
+			model.addAttribute("project", textNoteService.getContainingProject((TextNote) note));
+			model.addAttribute("projects", currentUser.getProjects());
+			model.addAttribute("referrer", referrer);
+			model.addAttribute("referrerId", referrerId);
+			model.addAttribute("referralURL", referrer + "/" + referrerId);
+			switch (referrer) {
+				case "dashboard":
+					model.addAttribute("redirectURL", "dashboard");
+					break;
+				case "project":
+					model.addAttribute("redirectURL", "project/" + referrerId);
+					break;
+				case "notes":
+					model.addAttribute("redirectURL", "notes");
+					break;
+				default:
+					redirectAttrs.addAttribute("error", "You don't have permission to access that item.");
+					return "redirect:/notes";
+			}
+			return "editNote";
+		} else {
+			redirectAttrs.addAttribute("error", "You don't have permission to access that item.");
+			return "redirect:/notes";
+		}
+	}
+	
+	@RequestMapping("/updateNote/{referrer}/{referrerId}/{noteId}")
+	public String updateNote(@PathVariable("referrer") String referrer, @PathVariable("referrerId") Long referrerId, @PathVariable("noteId") Long noteId, @ModelAttribute("item") @Valid ItemDTO dto, Model model) {
+		if (dto == null) return "/notes";
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User currentUser = userService.getUserByUsername(auth.getName());
+		
+		if (userService.hasNote(currentUser, dto.getId())) {
+			TextNote note = textNoteService.getTextNote(dto.getId());
+
+			textNoteService.updateContent(note, dto.getTitle());
+			
+			Project containingProject = textNoteService.getContainingProject(note);
+			projectService.removeNote(containingProject, note);
+			if (dto.getProjectID() != -1) {
+				Project targetProject = projectService.getProject(dto.getProjectID());
+				projectService.addNote(targetProject, note);
+			}
+			
+			return "redirect:/editNote/" + referrer + "/" + referrerId + "/" + noteId;
+		} else {
+			return "redirect:/notes";
+		}
+
+	}
 }

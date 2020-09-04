@@ -119,4 +119,12 @@ public class ProjectService implements IProjectService {
 		
 		project.setTitle(title);
 	}
+
+	@Override
+	@Transactional
+	public void removeNote(Project project, Note note) {
+		if (project == null || note == null) return;
+		
+		project.getNotes().remove(note);
+	}
 }

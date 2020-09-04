@@ -12,9 +12,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a4e465149a.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" type="text/css" href="../resources/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw==" crossorigin="anonymous" />
-    <link rel="stylesheet" type="text/css" href="../resources/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/style.css">
     <title>PlainPlanner - Edit Note</title>
 </head>
 <body>
@@ -65,38 +65,40 @@
 	    	<div class="container">
 	    		<div class="card">
 	    			<div class="card-header text-white text-center" style="background-color: #3A3535">
-	    				<h2>Editing "${note.title}"</h2>
+	    				<h2>Editing Note #${note.id}</h2>
 	    			</div>
 	    			<div class="card-body">
-							<form:form action="/updateNote" method="post" modelAttribute="item">
+							<form:form action="/updateNote/${referralURL}/${note.id}" method="post" modelAttribute="item">
 								<form:hidden path="id" value="${note.id}" />
 								<div class="row my-2">
 			    					<div class="input-group justify-content-center">
-			    						<form:label class="col-sm-2 col-form-label" path="content">Note</form:label>
+			    						<form:label class="col-sm-2 col-form-label" path="title">Note</form:label>
 			    						<div class="col-sm-4">
-			    							<form:input type="text" class="login-control form-control" value="${project.title}" path="content"></form:input>
+			    							<form:input type="text" class="login-control form-control" value="${note.content}" path="title"></form:input>
 			    						</div>
 			    					</div>
 			    				</div>
 			    				<div class="row my-2">
 			    					<div class="input-group justify-content-center">
-			    						<form:label class="col-6 col-sm-2 col-form-label" path="title">Bucket</form:label>
+			    						<form:label class="col-6 col-sm-2 col-form-label" path="title">Project</form:label>
 			    						<div class="col-6 col-sm-4">
-			    							<form:select class="btn custom-select text-left" path="bucketID">
+			    							<form:select class="btn custom-select text-left" path="projectID">
 			    								<c:choose>
-				    								<c:when test="${not empty bucket}">
-				    									<form:option value="${bucket.id}">${bucket.name}</form:option>
+				    								<c:when test="${not empty project}">
+				    									<form:option value="${project.id}">${project.title}</form:option>
 				    								</c:when>
 				    								<c:otherwise>
 				    									<form:option value="-1">Not selected</form:option>
 				    								</c:otherwise>
 			    								</c:choose>
-			    								<c:forEach items="${buckets}" var="item">
-			    									<c:if test="${(empty bucket) or (item.id != bucket.id)}">
-			    										<form:option value="${item.id}">${item.name}</form:option>
+			    								<c:if test="${not empty project}">
+				    								<form:option value="-1">No project</form:option>
+				    							</c:if>
+			    								<c:forEach items="${projects}" var="item">
+			    									<c:if test="${(empty project) or (item.id != project.id)}">
+			    										<form:option value="${item.id}">${item.title}</form:option>
 			    									</c:if>
 			    								</c:forEach>
-			    								
 			    							</form:select>
 			    						</div>
 			    					</div>
@@ -104,7 +106,7 @@
 			    				<div class="row justify-content-center mt-4">
 			    					<div class="col col-sm-4 d-flex justify-content-center align-items-center">
 			    						<form:button type="submit" class="btn btn-primary">Save</form:button>
-		    							<a href="/project/${project.id}" class="ml-0 ml-sm-4">Cancel</a>
+		    							<a href="/${redirectURL}" class="mx-sm-2">Cancel</a>
 			    					</div>
 		    					</div>
 		    				</form:form> 

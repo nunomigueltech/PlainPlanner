@@ -1,6 +1,7 @@
 package com.plainplanner.services;
 
 import com.plainplanner.entities.Idea;
+import com.plainplanner.entities.Note;
 import com.plainplanner.entities.Project;
 import com.plainplanner.entities.TextNote;
 
@@ -13,4 +14,5 @@ public interface ITextNoteService {
 	boolean textNoteExists(TextNote note);
 	boolean textNoteExists(Long id);
 	Project getContainingProject(TextNote note);
+	void updateContent(TextNote note, String content);
 }

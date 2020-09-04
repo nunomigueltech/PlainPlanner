@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.plainplanner.entities.Idea;
 import com.plainplanner.entities.Project;
@@ -89,6 +90,14 @@ public class TextNoteService implements ITextNoteService {
 		} else {
 			return containingProject.get(0);
 		}
+	}
+
+	@Override
+	@Transactional
+	public void updateContent(TextNote note, String content) {
+		if (note == null || content == null) return;
+		
+		note.setContent(content);
 	}
 
 }

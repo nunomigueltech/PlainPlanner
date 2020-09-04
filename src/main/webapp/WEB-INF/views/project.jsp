@@ -146,7 +146,8 @@
 										<c:when test="${not empty notes}">
 											<c:forEach items="${notes}" var="note">
 												 <li class="list-group-item">
-												 	<h4><a href="/note/${note.id}">Note (ID:${note.id})</a></h4>
+												 	<h4><a href="/editNote/project/${project.id}/${note.id}">Note (ID:${note.id})</a></h4>
+												 	<h5 style="font-size: 0.9rem;" class="text-info">Created on ${note.dateCreated}</h5> 
 											    	<h6 class="card-subtitle text-muted">${note.getContent() }</h6>
 												 </li>
 											</c:forEach>
