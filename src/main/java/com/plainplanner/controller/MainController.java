@@ -459,6 +459,59 @@ public class MainController {
 		}
 	}
 	
+	@RequestMapping("/editBucket/{id}")
+	public String editBucket(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttrs, HttpServletRequest request) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User currentUser = userService.getUserByUsername(auth.getName());
+		
+		if (userService.hasBucket(currentUser, id) && bucketService.canEdit(id)) {
+			ItemDTO dto = new ItemDTO();
+			model.addAttribute("item", dto);
+			
+			Bucket bucket = bucketService.getBucket(id);
+			model.addAttribute("bucket", bucket);
+			return "editBucket";
+		} else {
+			redirectAttrs.addAttribute("error", "You don't have permission to access that bucket.");
+			return "redirect:/buckets";
+		}
+	}
+	
+	@RequestMapping("/updateBucket")
+	public String updateBucket(@ModelAttribute("item") @Valid ItemDTO dto, RedirectAttributes redirectAttrs, Model model) {
+		if (dto == null) return "/buckets";
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User currentUser = userService.getUserByUsername(auth.getName());
+		
+		if (userService.hasBucket(currentUser, dto.getId()) && bucketService.canEdit(dto.getId())) {			
+			Bucket bucket = bucketService.getBucket(dto.getId());
+			bucketService.updateName(bucket, dto.getTitle());
+			bucketService.updateDescription(bucket, dto.getContent());
+
+			return "redirect:/bucket/" + dto.getId();
+		} else {
+			redirectAttrs.addAttribute("error", "You don't have permission to access that bucket.");
+			return "redirect:/buckets";
+		}
+	}
+	
+	@RequestMapping("/deleteBucket/{id}")
+	public String deleteBucket(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttrs, HttpServletRequest request) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User currentUser = userService.getUserByUsername(auth.getName());
+		
+		if (userService.hasBucket(currentUser, id)) {
+			Bucket bucket = bucketService.getBucket(id);
+			userService.removeBucket(currentUser, bucket);
+			bucketService.removeBucket(id);
+		} else {
+			redirectAttrs.addAttribute("error", "You don't have permission to access that bucket.");
+		}
+		return "redirect:/buckets";
+	}
+	
+	
 	@RequestMapping("/addNote")
 	public String addNote(Model model) {
 		ItemDTO dto = new ItemDTO();

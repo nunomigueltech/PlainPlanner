@@ -12,10 +12,10 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a4e465149a.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" type="text/css" href="/resources/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../resources/css/bootstrap.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw==" crossorigin="anonymous" />
-    <link rel="stylesheet" type="text/css" href="/resources/css/style.css">
-    <title>PlainPlanner - Edit Item</title>
+    <link rel="stylesheet" type="text/css" href="../resources/css/style.css">
+    <title>PlainPlanner - Edit Bucket</title>
 </head>
 <body>
 	<div id="wrapper">
@@ -65,89 +65,31 @@
 	    	<div class="container">
 	    		<div class="card">
 	    			<div class="card-header text-white text-center" style="background-color: #3A3535">
-	    				<h2>Viewing "${idea.title}"</h2>
+	    				<h2>Editing "${bucket.name}"</h2>
 	    			</div>
 	    			<div class="card-body">
-							<form:form action="/updateIdea/${referralURL}/${idea.id}" method="post" modelAttribute="item">
-								<form:hidden path="id" value="${idea.id}" />
+							<form:form action="/updateBucket" method="post" modelAttribute="item">
+								<form:hidden path="id" value="${bucket.id}" />
 								<div class="row my-2">
 			    					<div class="input-group justify-content-center">
-			    						<form:label class="col-6 col-sm-2 col-form-label" path="title">Title</form:label>
-			    						<div class="col-6 col-sm-4">
-			    							<form:input type="text" class="login-control form-control" value="${idea.title}" path="title"></form:input>
+			    						<form:label class="col-sm-2 col-form-label" path="title">Name</form:label>
+			    						<div class="col-sm-4">
+			    							<form:input type="text" class="login-control form-control" value="${bucket.name}" path="title"></form:input>
 			    						</div>
 			    					</div>
 			    				</div>
-			    				<div class="row my-2">
+								<div class="row my-2">
 			    					<div class="input-group justify-content-center">
-			    						<form:label class="col-6 col-sm-2 col-form-label" path="title">Project</form:label>
-			    						<div class="col-6 col-sm-4">
-			    							<form:select class="btn custom-select text-left" path="projectID">
-			    								<c:choose>
-				    								<c:when test="${not empty project}">
-				    									<form:option value="${project.id}">${project.title}</form:option>
-				    								</c:when>
-				    								<c:otherwise>
-				    									<form:option value="-1">Not selected</form:option>
-				    								</c:otherwise>
-			    								</c:choose>
-			    								<c:if test="${not empty project}">
-				    								<form:option value="-1">No project</form:option>
-				    							</c:if>
-			    								<c:forEach items="${projects}" var="item">
-			    									<c:if test="${(empty project) or (item.id != project.id)}">
-			    										<form:option value="${item.id}">${item.title}</form:option>
-			    									</c:if>
-			    								</c:forEach>
-			    							</form:select>
+			    						<form:label class="col-sm-2 col-form-label" path="content">Description</form:label>
+			    						<div class="col-sm-4">
+			    							<form:input type="text" class="login-control form-control" value="${bucket.description}" path="content"></form:input>
 			    						</div>
 			    					</div>
-			    				</div>
-			    				<div class="row my-2">
-			    					<div class="input-group justify-content-center">
-			    						<form:label class="col-6 col-sm-2 col-form-label" path="content">Description</form:label>
-			    						<div class="col-6 col-sm-4">
-			    							<form:input type="text" class="login-control form-control" value="${idea.description}" path="content"></form:input>
-			    						</div>
-			    					</div>
-			    				</div>
-			    				<div class="row my-2">
-			    					<div class="input-group justify-content-center">
-			    						<form:label class="col-6 col-sm-2 col-form-label" path="content">Deadline</form:label>
-			    						<div class="col-6 col-sm-4">
-											<c:choose>
-												<c:when test="${ not empty idea.deadline }">
-													<form:input class="form-control text-center" id="date" path="date" placeholder="MM/DD/YYY" type="text" style="max-width: 125px;"></form:input>
-												</c:when>
-												<c:otherwise>
-													<a href="/addIdeaDeadline/${referralURL}/${idea.id}" class="btn btn-outline-primary">Add deadline</a>
-												</c:otherwise>
-											</c:choose>			    						
-										</div>
-			    					</div>
-			    				</div>
-			    				<div class="row my-3 justify-content-center">
-			    					<div class="col-6 col-md-4">
-				    					<div class="input-group d-flex justify-content-center align-items-center">
-				    						<c:url value="/complete/idea/${referralURL}/${idea.id}" var="completeUrl"/>
-				    						<c:if test="${idea.isComplete()}">
-										    	<a class="btn btn-warning disabled">
-											    	Item Completed
-											    </a>
-										   	</c:if>
-										   	<c:if test="${!idea.isComplete()}">
-										    	<a class="btn btn-warning" href="/complete/idea/${referralURL}/${idea.id}">
-											    	Complete Item
-											    </a>
-										   	</c:if>
-				    					</div>
-				    				</div>
 			    				</div>
 			    				<div class="row justify-content-center mt-4">
-			    					<div class="col-4 d-flex justify-content-center align-items-center">
-			    						<form:button type="submit" class="btn btn-primary mx-sm-2">Save</form:button>
-			    						<a class="btn btn-primary mx-sm-2" href="/deleteIdea/${referralURL}/${idea.id}">Delete</a>
-		    							<a href="/${redirectURL}" class="mx-sm-2">Cancel</a>
+			    					<div class="col col-sm-4 d-flex justify-content-center align-items-center">
+			    						<form:button type="submit" class="btn btn-primary">Save</form:button>
+		    							<a href="/bucket/${bucket.id}" class="ml-0 ml-sm-4">Cancel</a>
 			    					</div>
 		    					</div>
 		    				</form:form> 
@@ -174,7 +116,7 @@
 	        autoclose: true,
 	      };
 	      date_input.datepicker(options);
-	      var date = "${idea.getDeadlineString()}";
+	      var date = "${project.getDeadlineString()}";
 	      date_input.datepicker('setDate', date);
 	    })
 	</script>

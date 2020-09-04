@@ -91,6 +91,7 @@ public class UserService implements IUserService {
 	}
 
 	@Override
+	@Transactional
 	public boolean removeBucket(User user, Bucket bucket) {
 		if (user == null || bucket == null) return false;
 		

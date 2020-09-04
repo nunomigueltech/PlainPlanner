@@ -16,4 +16,7 @@ public interface IBucketService {
 	boolean containsBucket(Bucket bucket);
 	void addIdea(Bucket bucket, Idea idea);
 	void removeIdea(Bucket bucket, Idea idea);
+	void updateName(Bucket bucket, String name);
+	void updateDescription(Bucket bucket, String description);
+	boolean canEdit(Long id);
 }

@@ -79,10 +79,10 @@
 						<div class="row justify-content-center">
 							<div class="col-6 col-sm-12">
 								<a class="btn btn-primary btn-sm m-2" href="/buckets">Back to Buckets</a>
-								<a class="btn btn-primary btn-sm m-2" href="/buckets"><i class="fas fa-edit"></i> Edit Bucket</a>
+								<a class="btn btn-primary btn-sm m-2" href="/editBucket/${bucket.id}"><i class="fas fa-edit"></i> Edit Bucket</a>
 								<c:choose>
 									<c:when test="${bucket.isDeletionPermitted()}">
-										<a class="btn btn-primary btn-sm m-2" href="/buckets"><i class="fas fa-trash"></i> Delete Bucket</a>
+										<a class="btn btn-primary btn-sm m-2" href="/deleteBucket/${bucket.id}"><i class="fas fa-trash"></i> Delete Bucket</a>
 									</c:when>
 									<c:otherwise>
 										<a class="btn btn-primary btn-sm m-2 disabled" href="/buckets"><i class="fas fa-trash"></i> Delete Bucket</a>

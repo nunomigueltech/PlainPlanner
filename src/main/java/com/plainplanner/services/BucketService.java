@@ -30,10 +30,15 @@ public class BucketService implements IBucketService {
 	}
 	
 	@Override
+	@Transactional
 	public boolean removeBucket(Long id) {
 		if (id == null) return false;
 		
-		repository.deleteById(id);
+		Bucket bucket = getBucket(id);
+		if (bucket.isDeletionPermitted()) {
+			repository.delete(bucket);
+		} 
+
 		return (!containsBucket(id));
 	}
 
@@ -80,5 +85,29 @@ public class BucketService implements IBucketService {
 		if (bucket.getIdeas().contains(idea)) {
 			bucket.getIdeas().remove(idea);
 		}
+	}
+
+	@Override
+	@Transactional
+	public void updateName(Bucket bucket, String name) {
+		if (bucket == null || name == null) return;
+		
+		bucket.setName(name);
+	}
+
+	@Override
+	@Transactional
+	public void updateDescription(Bucket bucket, String description) {
+		if (bucket == null || description == null) return;
+		
+		bucket.setDescription(description);
+	}
+
+	@Override
+	public boolean canEdit(Long id) {
+		if (id == null) return false;
+		
+		Bucket bucket = getBucket(id);
+		return (bucket != null && bucket.isDeletionPermitted());
 	}
 }
