@@ -36,4 +36,6 @@ public interface IUserService {
 	List<Idea> getIdeas(User user);
 	List<Idea> getTasks(User user);
 	List<Idea> getUpcomingTasks(User user);
+	
+	void updateSetting(User user, String settingKey, Boolean setting);
 } 

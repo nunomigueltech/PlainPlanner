@@ -139,7 +139,9 @@
 						</div>
 						<div class="row">
 							<div class="col">
-								<h4 class="card-title">Notes</h4>
+								<h4 class="card-title">Notes 
+								<a class="btn btn-primary btn-sm ml-3" href="/addNote/project/${project.id}"><i class="fas fa-plus-circle"></i> New Note</a>
+								</h4>
 								<hr>
 								<ul class="list-group list-group-flush">
 									<c:choose>

@@ -258,4 +258,12 @@ public class UserService implements IUserService {
 		return date1.getDay() == date2.getDay() && date1.getMonth() == date2.getMonth() &&
 				date1.getYear() == date2.getYear();
 	}
+
+	@Override
+	@Transactional
+	public void updateSetting(User user, String settingKey, Boolean setting) {
+		if (user == null || settingKey == null || setting == null) return;
+		
+		user.getSettings().put(settingKey, setting);
+	}
 }

@@ -72,6 +72,22 @@
 								    <li class="list-group-item">
 								    	<h4>${item.getKey()}</h4>  
 								    	<h6>Enabled: ${item.getValue()}</h6>
+								    	<c:choose>
+								    		<c:when test="${item.getValue()}">
+								    			<a class="btn btn-primary btn-sm ml-3 disabled" href="/toggleSetting/${item.getKey()}">Enabled</a>
+								    		</c:when>
+								    		<c:otherwise>
+								    			<a class="btn btn-primary btn-sm ml-3" href="/toggleSetting/${item.getKey()}">Enable</a>
+								    		</c:otherwise>
+								    	</c:choose>
+								    	<c:choose>
+								    		<c:when test="${!item.getValue()}">
+								    			<a class="btn btn-primary btn-sm ml-3 disabled" href="/toggleSetting/${item.getKey()}">Disabled</a>
+								    		</c:when>
+								    		<c:otherwise>
+								    			<a class="btn btn-primary btn-sm ml-3" href="/toggleSetting/${item.getKey()}">Disable</a>
+								    		</c:otherwise>
+								    	</c:choose>
 								    </li>
 								</c:forEach>
 	    					</ul>

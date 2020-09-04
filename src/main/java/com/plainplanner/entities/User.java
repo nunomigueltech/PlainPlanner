@@ -65,7 +65,6 @@ public class User {
 	
 	public User() {
 		settings.put("Cat Mode", false);
-		settings.put("Show completed tasks and ideas", true);
 	}
 	
 	public User(String username, String passHash) {

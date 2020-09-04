@@ -74,8 +74,16 @@
 	
 	    <section id="test" class="mb-5 mt-3">
 	    	<div class="container">
-	    		<h1 class="text-dark">This is about PlainPlanner.</h1>
-
+				<div class="card">
+					<div class="card-body">
+						<h1 class="text-dark">About PlainPlanner</h1>
+			    		<p>
+				    		PlainPlanner is a web application written by Nuno Rodrigues with the intention of displaying progress made throughout the Java
+				    		Developer Training program at Per Scholas. This application stores your login information securely and it doesn't track any information
+				    		about its users. You don't even have to supply an email address.
+			    		</p>
+					</div>
+				</div>
 	        </div>
 	    </section>
 	    

@@ -98,6 +98,9 @@
 	    <section id="upcoming-section">
 	    	<div class="container">
 	    		<div class="card mb-3">
+	    			<c:if test="${ catMode }">
+	    				<img src="https://media0.giphy.com/media/H4DjXQXamtTiIuCcRU/giphy.gif">
+	    			</c:if>
 	    			<div class="card-header text-white text-center" style="background-color: #3A3535">
 	    				<h2 class="card-title">Upcoming Tasks</h2>
 	    			</div>

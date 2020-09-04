@@ -88,6 +88,7 @@ public class MainController {
 			
 			List<Project> projects = currentUser.getProjects();
 			model.addAttribute("projects", projects);
+			model.addAttribute("catMode", currentUser.getSettings().get("Cat Mode"));
 		}
 		
 		return "projects";
@@ -101,6 +102,7 @@ public class MainController {
 			
 			List<Bucket> buckets = currentUser.getBuckets();
 			model.addAttribute("buckets", buckets);
+			model.addAttribute("catMode", currentUser.getSettings().get("Cat Mode"));
 		}
 		
 		return "buckets";
@@ -114,6 +116,7 @@ public class MainController {
 			
 			List<Note> notes = currentUser.getNotes();
 			model.addAttribute("notes", notes);
+			model.addAttribute("catMode", currentUser.getSettings().get("Cat Mode"));
 		}
 		
 		return "notes";
@@ -237,6 +240,7 @@ public class MainController {
 		
 		List<Idea> upcomingTasks = userService.getUpcomingTasks(currentUser);
 		model.addAttribute("upcoming", upcomingTasks);
+		model.addAttribute("catMode", currentUser.getSettings().get("Cat Mode"));
 		
 		return "dashboard";
 	}
@@ -295,12 +299,18 @@ public class MainController {
 				case "note":
 					TextNote newNote = new TextNote(dto.getTitle());
 					userService.addTextNote(currentUser, newNote);
+					if (dto.getProjectID() != null && ((long) dto.getProjectID()) != -1) {
+						Project project = projectService.getProject(dto.getProjectID());
+						projectService.addNote(project, newNote);
+					}
 					break;
 			}
 			resultingPage.addObject("added", dto.getItemType());
 			
 			if (referrer.equals("dashboard")) {
 				resultingPage.setViewName("redirect:/dashboard");
+			} else if (referrer.equals("notes")) {
+				resultingPage.setViewName("redirect:/notes");
 			} else {
 				resultingPage.setViewName("redirect:/" + referrer + "/" + referrerId);
 			}
@@ -600,5 +610,45 @@ public class MainController {
 			return "redirect:/notes";
 		}
 
+	}
+	
+	@RequestMapping("/addNote/{referrer}/{referrerId}")
+	public String addNote(@PathVariable("referrer") String referrer, @PathVariable("referrerId") Long referrerId, Model model, @ModelAttribute("redirectURL") String redirectURL, RedirectAttributes redirectAttrs, HttpServletRequest request) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User currentUser = userService.getUserByUsername(auth.getName());
+
+		ItemDTO dto = new ItemDTO();
+		model.addAttribute("item", dto);
+
+		if (referrer.equals("project")) {
+			model.addAttribute("project", projectService.getProject(referrerId));
+		}
+		model.addAttribute("projects", currentUser.getProjects());
+		model.addAttribute("referrer", referrer);
+		model.addAttribute("referrerId", referrerId);
+		model.addAttribute("referralURL", referrer + "/" + referrerId);
+		switch (referrer) {
+				case "notes":
+					model.addAttribute("redirectURL", "notes");
+					break;
+				case "project":
+					model.addAttribute("redirectURL", "project/" + referrerId);
+					break;
+				default:
+					redirectAttrs.addAttribute("error", "You don't have permission to access that item.");
+					return "redirect:/dashboard";
+		}
+		
+		return "addNote";			
+	}
+	
+	@RequestMapping("/toggleSetting/{settingKey}")
+	public String project(@PathVariable("settingKey") String settingKey, Model model, RedirectAttributes redirectAttrs, HttpServletRequest request) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User currentUser = userService.getUserByUsername(auth.getName());
+		
+		boolean currentSetting = currentUser.getSettings().get(settingKey);
+		userService.updateSetting(currentUser, settingKey, !currentSetting);
+		return "redirect:/settings";
 	}
 }

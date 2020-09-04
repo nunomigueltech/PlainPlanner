@@ -63,6 +63,9 @@
 	    	<div class="container">
 	    		<div class="card mt-3">
 	    			<div class="card-header text-white text-center" style="background-color: #3A3535">
+	    				<c:if test="${ catMode }">
+		    				<img src="https://cdn.shopify.com/s/files/1/0344/6469/files/cat-gif-loop-ice_grande.gif?v=1523984147">
+		    			</c:if>
 	    				<div class="row">
 	    					<div class="col justify-content-center">
 	    						<h2 class="card-title text-center">My Notes</h2>
@@ -70,7 +73,7 @@
 	    				</div>
 	    				<div class="row">
 	    					<div class="col justify-content-center">
-	    						<a class="btn btn-primary btn-sm text-white" href="/addNote">Add Note</a>
+	    						<a class="btn btn-primary btn-sm text-white" href="/addNote/notes/1">Add Note</a>
 	    					</div>
 	    				</div>
 	    			</div>

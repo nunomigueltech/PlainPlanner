@@ -34,9 +34,21 @@
 	        </div>
 	    </nav>
 	
-	    <section id="test" class="mb-5 mt-3">
-	    	<div class="container">
-			
+	    <section id="index-content">
+	    	<div id="index-content-banner" class="container-fluid mb-5 pt-3 pb-1 ">
+				<div class="container">
+					<div class="jumbotron mb-3">
+						<h1 class="display-">A plain planner</h1>
+						<p class="lead">Organize your life an idea or task at a time.</p>
+						<hr class="my-4">
+						<p>
+							PlainPlanner is a simple application for quickly recording your thoughts and categorizing them quickly for future use.
+							It's quick and easy to start.
+						</p>
+						<a href="/register" class="btn btn-primary">Register now</a>
+						<a href="/signin" class="btn btn-primary">Sign in</a>
+					</div>
+				</div>
 	        </div>
 	    </section>
 	    

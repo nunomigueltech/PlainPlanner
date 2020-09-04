@@ -68,19 +68,45 @@
 	    				<h2>Create New Note</h2>
 	    			</div>
 	    			<div class="card-body">
-							<form:form action="/handleAddNote" method="post" modelAttribute="item">
+							<form:form action="/addNewItem/${referrer}/${referrerId}" method="post" modelAttribute="item">
+								<form:hidden path="itemType" value="note" />
 								<div class="row my-2">
 			    					<div class="input-group justify-content-center">
 			    						<form:label class="col-4 col-md-2 col-form-label" path="title">Content</form:label>
 			    						<div class="col-8 col-md-4">
-			    							<form:input type="text" class="login-control form-control" placeholder="Enter the note content here" path="title"></form:input>
+			    							<form:input type="text" class="login-control form-control" placeholder="Enter your note here" path="title"></form:input>
+			    						</div>
+			    					</div>
+			    				</div>
+			    				<div class="row my-2">
+			    					<div class="input-group justify-content-center">
+			    						<form:label class="col-6 col-sm-2 col-form-label" path="title">Project</form:label>
+			    						<div class="col-6 col-sm-4">
+			    							<form:select class="btn custom-select text-left" path="projectID">
+			    								<c:choose>
+				    								<c:when test="${referrer == 'project'}">
+				    									<form:option value="${project.id}">${project.title}</form:option>
+				    								</c:when>
+				    								<c:otherwise>
+				    									<form:option value="-1">Not selected</form:option>
+				    								</c:otherwise>
+			    								</c:choose>
+			    								<c:if test="${not empty project}">
+				    								<form:option value="-1">No project</form:option>
+				    							</c:if>
+			    								<c:forEach items="${projects}" var="item">
+			    									<c:if test="${(empty project) or (item.id != project.id)}">
+			    										<form:option value="${item.id}">${item.title}</form:option>
+			    									</c:if>
+			    								</c:forEach>
+			    							</form:select>
 			    						</div>
 			    					</div>
 			    				</div>
 			    				<div class="row mt-4 justify-content-center">
 			    					<div class="col-6 col-md-4 d-flex justify-content-center align-items-center">
 			    						<form:button type="submit" class="btn btn-primary mx-2">Add</form:button>
-		    							<a href="/notes" class="mx-2">Cancel</a>
+		    							<a href="/${redirectURL}" class="mx-2">Cancel</a>
 			    					</div>
 		    					</div>
 		    				</form:form> 

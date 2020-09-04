@@ -36,3 +36,13 @@ html, body {
 	width: 100%;
 	height: 50px;	
 }
+
+.jumbotron {
+	opacity: 0.95;
+}
+
+#index-content-banner {
+	background-image: url("/resources/images/room.jpg");
+	background-repeat: no-repeat;
+	background-size: cover;
+}

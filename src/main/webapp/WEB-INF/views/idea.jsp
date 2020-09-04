@@ -80,6 +80,29 @@
 			    				</div>
 			    				<div class="row my-2">
 			    					<div class="input-group justify-content-center">
+			    						<form:label class="col-6 col-sm-2 col-form-label" path="title">Bucket</form:label>
+			    						<div class="col-6 col-sm-4">
+			    							<form:select class="btn custom-select text-left" path="bucketID">
+			    								<c:choose>
+				    								<c:when test="${not empty bucket}">
+				    									<form:option value="${bucket.id}">${bucket.name}</form:option>
+				    								</c:when>
+				    								<c:otherwise>
+				    									<form:option value="-1">Not selected</form:option>
+				    								</c:otherwise>
+			    								</c:choose>
+			    								<c:forEach items="${buckets}" var="item">
+			    									<c:if test="${(empty bucket) or (item.id != bucket.id)}">
+			    										<form:option value="${item.id}">${item.name}</form:option>
+			    									</c:if>
+			    								</c:forEach>
+
+			    							</form:select>
+			    						</div>
+			    					</div>
+			    				</div>
+			    				<div class="row my-2">
+			    					<div class="input-group justify-content-center">
 			    						<form:label class="col-6 col-sm-2 col-form-label" path="title">Project</form:label>
 			    						<div class="col-6 col-sm-4">
 			    							<form:select class="btn custom-select text-left" path="projectID">

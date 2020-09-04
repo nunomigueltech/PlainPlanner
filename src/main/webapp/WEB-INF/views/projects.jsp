@@ -63,6 +63,9 @@
 	    	<div class="container">
 	    		<div class="card mt-3">
 	    			<div class="card-header text-white text-center" style="background-color: #3A3535">
+	    				<c:if test="${ catMode }">
+		    				<img src="https://media2.giphy.com/media/VbnUQpnihPSIgIXuZv/giphy.gif">
+		    			</c:if>
 	    				<div class="row">
 	    					<div class="col justify-content-center">
 	    						<h2 class="card-title text-center">My Projects</h2>
