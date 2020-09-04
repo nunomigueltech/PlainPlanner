@@ -474,7 +474,7 @@ public class MainController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User currentUser = userService.getUserByUsername(auth.getName());
 		
-		if (userService.hasBucket(currentUser, id) && bucketService.canEdit(id)) {
+		if (userService.hasBucket(currentUser, id)) {
 			ItemDTO dto = new ItemDTO();
 			model.addAttribute("item", dto);
 			
